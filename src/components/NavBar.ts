@@ -45,11 +45,20 @@ export default class NavBar {
   selectedFilterUser: string;
   selectedTaskUser: string;
   $header: HTMLElement;
+  $tagsMenu: HTMLDivElement;
+  $tagsContainer: HTMLDivElement;
   tags: string[];
 
   constructor() {
     const header = document.querySelector("#js-header") as HTMLElement;
     this.$header = header;
+
+    const tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
+    this.$tagsMenu = tagsMenu;
+    const tagsContainer = document.querySelector(
+      "#js-tagsContainer"
+    ) as HTMLDivElement;
+    this.$tagsContainer = tagsContainer;
 
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
@@ -71,15 +80,32 @@ export default class NavBar {
         usersTasksHTML
       );
     }
+    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
+    this.$tagsContainer = document.querySelector(
+      "#js-tagsContainer"
+    ) as HTMLDivElement;
     this.addEventListeners();
   }
   renderNavBar(usersFilterHTML: string, usersTasksHTML: string): string {
     return `
-      <nav class="pl-10 flex items-center justify-around bg-gray-100">
-        <h1>Lista de Tarefas</h1>
+      <nav class="pl-10 flex items-center justify-around bg-gray-100 border-b-2">
+        <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
         <div id="js-tags" class="flex items-center justify-beetwen navBar h-16">
-          <p>Filtros: </p>
-          ${this.renderTagsForFilter() + usersFilterHTML}
+          <div id="js-filterMenu" class="flex flex-col items-center justify-center bg-blue-500 w-24 h-full cursor-pointer">
+            <p class="font-thin text-lg">Filtros</p>
+            <div class="absolute shadow-xl flex items-left justify-center flex-col mt-56 bg-red-200 w-36 h-40">
+              <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 h-full">
+                <p class="font-light text-lg">Tags</p> 
+                <p class="absolute text-lg left-3/4 translate-x-2">></p>
+                ${this.renderTagsForFilter()}
+              </div>
+              <div class="flex items-center justify-center bg-blue-100 h-full">
+                <p class="font-light text-lg">Usuário</p>
+                <p class="absolute text-lg left-3/4 translate-x-2">></p>
+                ${usersFilterHTML}
+              </div>
+            </div>
+          </div>
         </div>
         ${usersTasksHTML}
       </nav>
@@ -87,16 +113,20 @@ export default class NavBar {
   }
   renderTagsForFilter() {
     return `
-      <div class="pl-10 pr-10 flex gap-8">
+      <div id="js-tagsContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
         ${this.tags
           .map(
             (tag) => `
-          <span class="${tag === this.selectedTag ? "relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg text-white" : "border-2 border-solid border-gray-300"} rounded-lg pr-4 pl-4 pt-2 pb-2 cursor-pointer">${
+          <span class="${
             tag === this.selectedTag
-              ? `
+              ? "relative bg-slate-600 rounded-lg text-white"
+              : ""
+          } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
+              tag === this.selectedTag
+                ? `
             <div>${this.selectedTag}</div>`
-              : tag
-          }
+                : tag
+            }
           </span>
         `
           )
@@ -128,7 +158,7 @@ export default class NavBar {
     return `
       <div class="dropdown">
         <div id="selectedFilterUser" class="selectedFilterUser">
-          <div id="img-wrapper-filter" class="img-wrapper-filter"> <!-- Adicionando um wrapper para a imagem -->
+          <div id="img-wrapper-filter" class="img-wrapper-filter">
             <img data-id="1" class="img" src="${this.selectedFilterUser}" alt="" />
           </div>
         </div>
@@ -178,7 +208,16 @@ export default class NavBar {
       }
     });
 
-    //MELHORAR ISSO, MDS QUE COISA HORROROSA
+    this.$tagsMenu?.addEventListener("mouseenter", () => {
+      this.$tagsContainer?.classList.remove("hidden");
+      this.$tagsContainer?.classList.add("grid");
+    });
+    this.$tagsMenu?.addEventListener("mouseleave", () => {
+      this.$tagsContainer?.classList.remove("grid");
+      this.$tagsContainer?.classList.add("hidden");
+    });
+
+    // MELHORAR ISSO, MDS QUE COISA HORROROSA
     const dropdownFilter = document.getElementById(
       "img-wrapper-filter"
     ) as HTMLElement;
@@ -219,7 +258,7 @@ export default class NavBar {
       }
     });
 
-    //Fecha o menu ao clicar fora do dropdown
+    // Fecha o menu ao clicar fora do dropdown, bugs e mais bugs
     // document.addEventListener("click", (event) => {
     //   if (
     //     event.target instanceof Node &&
