@@ -45,6 +45,8 @@ export default class NavBar {
   selectedFilterUser: string;
   selectedTaskUser: string;
   $header: HTMLElement;
+  $filterMenu: HTMLDivElement;
+  $filterMenuContainer: HTMLDivElement;
   $tagsMenu: HTMLDivElement;
   $tagsContainer: HTMLDivElement;
   tags: string[];
@@ -53,6 +55,14 @@ export default class NavBar {
     const header = document.querySelector("#js-header") as HTMLElement;
     this.$header = header;
 
+    const filterMenu = document.querySelector(
+      "#js-filterMenu"
+    ) as HTMLDivElement;
+    this.$filterMenu = filterMenu;
+    const filterMenuContainer = document.querySelector(
+      "#js-filterMenuContainer"
+    ) as HTMLDivElement;
+    this.$filterMenuContainer = filterMenuContainer;
     const tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
     this.$tagsMenu = tagsMenu;
     const tagsContainer = document.querySelector(
@@ -84,6 +94,13 @@ export default class NavBar {
     this.$tagsContainer = document.querySelector(
       "#js-tagsContainer"
     ) as HTMLDivElement;
+    this.$filterMenu = document.querySelector(
+      "#js-filterMenu"
+    ) as HTMLDivElement;
+    this.$filterMenuContainer = document.querySelector(
+      "#js-filterMenuContainer"
+    ) as HTMLDivElement;
+
     this.addEventListeners();
   }
   renderNavBar(usersFilterHTML: string, usersTasksHTML: string): string {
@@ -93,7 +110,7 @@ export default class NavBar {
         <div id="js-tags" class="flex items-center justify-beetwen navBar h-16">
           <div id="js-filterMenu" class="flex flex-col items-center justify-center bg-blue-500 w-24 h-full cursor-pointer">
             <p class="font-thin text-lg">Filtros</p>
-            <div class="absolute shadow-xl flex items-left justify-center flex-col mt-56 bg-red-200 w-36 h-40">
+            <div id="js-filterMenuContainer" class="absolute shadow-xl hidden items-left justify-center flex-col mt-56 bg-red-200 w-36 h-40">
               <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 h-full">
                 <p class="font-light text-lg">Tags</p> 
                 <p class="absolute text-lg left-3/4 translate-x-2">></p>
@@ -206,6 +223,15 @@ export default class NavBar {
         // console.log(selectedTag);
         location.reload(); // fica pro cara do update resolver kkkkk
       }
+    });
+
+    this.$filterMenu?.addEventListener("mouseenter", () => {
+      this.$filterMenuContainer?.classList.remove("hidden");
+      this.$filterMenuContainer?.classList.add("flex");
+    });
+    this.$filterMenu?.addEventListener("mouseleave", () => {
+      this.$filterMenuContainer?.classList.remove("flex");
+      this.$filterMenuContainer?.classList.add("hidden");
     });
 
     this.$tagsMenu?.addEventListener("mouseenter", () => {
