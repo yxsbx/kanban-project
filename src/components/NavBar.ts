@@ -47,6 +47,8 @@ export default class NavBar {
   $header: HTMLElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
+  $usersMenu: HTMLDivElement;
+  $usersMenuContainer: HTMLDivElement;
   $tagsMenu: HTMLDivElement;
   $tagsContainer: HTMLDivElement;
   tags: string[];
@@ -63,12 +65,20 @@ export default class NavBar {
       "#js-filterMenuContainer"
     ) as HTMLDivElement;
     this.$filterMenuContainer = filterMenuContainer;
+
     const tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
     this.$tagsMenu = tagsMenu;
     const tagsContainer = document.querySelector(
       "#js-tagsContainer"
     ) as HTMLDivElement;
     this.$tagsContainer = tagsContainer;
+
+    const usersMenu = document.querySelector("#js-usersMenu") as HTMLDivElement;
+    this.$usersMenu = usersMenu;
+    const usersMenuContainer = document.querySelector(
+      "#js-usersMenuContainer"
+    ) as HTMLDivElement;
+    this.$usersMenuContainer = usersMenuContainer;
 
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
@@ -90,15 +100,21 @@ export default class NavBar {
         usersTasksHTML
       );
     }
-    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
-    this.$tagsContainer = document.querySelector(
-      "#js-tagsContainer"
-    ) as HTMLDivElement;
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
     this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
+    ) as HTMLDivElement;
+
+    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
+    this.$tagsContainer = document.querySelector(
+      "#js-tagsContainer"
+    ) as HTMLDivElement;
+
+    this.$usersMenu = document.querySelector("#js-usersMenu") as HTMLDivElement;
+    this.$usersMenuContainer = document.querySelector(
+      "#js-usersMenuContainer"
     ) as HTMLDivElement;
 
     this.addEventListeners();
@@ -110,13 +126,13 @@ export default class NavBar {
         <div id="js-tags" class="flex items-center justify-beetwen navBar h-16">
           <div id="js-filterMenu" class="flex flex-col items-center justify-center bg-blue-500 w-24 h-full cursor-pointer">
             <p class="font-thin text-lg">Filtros</p>
-            <div id="js-filterMenuContainer" class="absolute shadow-xl hidden items-left justify-center flex-col mt-56 bg-red-200 w-36 h-40">
+            <div id="js-filterMenuContainer" class="absolute shadow-xl hidden items-left justify-center flex-col mt-56 w-36 h-40">
               <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 h-full">
                 <p class="font-light text-lg">Tags</p> 
                 <p class="absolute text-lg left-3/4 translate-x-2">></p>
                 ${this.renderTagsForFilter()}
               </div>
-              <div class="flex items-center justify-center bg-blue-100 h-full">
+              <div id="js-usersMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 h-full">
                 <p class="font-light text-lg">Usuário</p>
                 <p class="absolute text-lg left-3/4 translate-x-2">></p>
                 ${usersFilterHTML}
@@ -173,17 +189,22 @@ export default class NavBar {
     // console.log(img_pikachu);
 
     return `
-      <div class="dropdown">
-        <div id="selectedFilterUser" class="selectedFilterUser">
-          <div id="img-wrapper-filter" class="img-wrapper-filter">
-            <img data-id="1" class="img" src="${this.selectedFilterUser}" alt="" />
-          </div>
+      <div id="js-usersMenuContainer" class="bg-red-100 w-80 h-full top-0 rounded-bl-md absolute left-full hidden grid-rows-2 grid-cols-3 items-center justify-items-center justify-center"> 
+        <div id="js-selectedFilterUser" class="w-16 h-16 row-start-1 row-span-2 col-start-1 col-span-1">
+            <img class="" src="${this.selectedFilterUser}" alt="" />
         </div>
-        <div class="dropdownContent-filter">
-          <img class="img" src="${img_pikachu}" alt="" />
-          <img class="img" src="${img_bulbasaur}" alt="" />
-          <img class="img" src="${img_charmander}" alt="" />
-          <img class="img" src="${img_blastoise}" alt="" />
+        <div class="w-12 row-start-1 row-span-1 col-start-2 col-span-1">
+          <img src="${img_pikachu}" alt="" />
+        </div>
+        <div class="w-12 row-start-2 row-span-1 col-start-2 col-span-1">
+          <img src="${img_bulbasaur}" alt="" />
+        </div>
+        <p class="row-start-2 row-span-1 col-start-1 col-span-1">Usuário Atual</p>
+        <div class="w-12 row-start-1 row-span-1 col-start-3 col-span-1">
+          <img src="${img_charmander}" alt="" />
+        </div>
+        <div class="w-12 row-start-2 row-span-1 col-start-3 col-span-1">
+          <img src="${img_blastoise}" alt="" />
         </div>
       </div>
     `;
@@ -196,7 +217,7 @@ export default class NavBar {
     // console.log(img_pikachu);
 
     return `
-      <div class="dropdown ">
+      <div class="dropdown">
         <div id="selectedFilterUser" class="selectedFilterUser">
           <div id="img-wrapper-tasks" class="img-wrapper-tasks"> <!-- Adicionando um wrapper para a imagem -->
             <img data-id="1" class="img" src="${this.selectedTaskUser}" alt="" />
@@ -243,26 +264,35 @@ export default class NavBar {
       this.$tagsContainer?.classList.add("hidden");
     });
 
+    this.$usersMenu?.addEventListener("mouseenter", () => {
+      this.$usersMenuContainer?.classList.remove("hidden");
+      this.$usersMenuContainer?.classList.add("grid");
+    });
+    this.$usersMenu?.addEventListener("mouseleave", () => {
+      this.$usersMenuContainer?.classList.remove("grid");
+      this.$usersMenuContainer?.classList.add("hidden");
+    });
+
     // MELHORAR ISSO, MDS QUE COISA HORROROSA
-    const dropdownFilter = document.getElementById(
-      "img-wrapper-filter"
-    ) as HTMLElement;
-    const dropdownContentFilter = document.querySelector(
-      ".dropdownContent-filter"
-    ) as HTMLElement;
-    dropdownFilter?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      dropdownContentFilter.style.display = "flex";
-    });
-    dropdownContentFilter.addEventListener("click", (event) => {
-      if (event.target instanceof HTMLImageElement) {
-        const imgSrc = event.target.src;
-        const saveUser = new FilterTaskUserManager();
-        saveUser.setFilterSelectedUser(imgSrc);
-        dropdownContentFilter.style.display = "none";
-        location.reload();
-      }
-    });
+    // const dropdownFilter = document.getElementById(
+    //   "img-wrapper-filter"
+    // ) as HTMLElement;
+    // const dropdownContentFilter = document.querySelector(
+    //   ".dropdownContent-filter"
+    // ) as HTMLElement;
+    // dropdownFilter?.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+    //   dropdownContentFilter.style.display = "flex";
+    // });
+    // dropdownContentFilter.addEventListener("click", (event) => {
+    //   if (event.target instanceof HTMLImageElement) {
+    //     const imgSrc = event.target.src;
+    //     const saveUser = new FilterTaskUserManager();
+    //     saveUser.setFilterSelectedUser(imgSrc);
+    //     dropdownContentFilter.style.display = "none";
+    //     location.reload();
+    //   }
+    // });
 
     const dropdownTask = document.getElementById(
       "img-wrapper-tasks"
@@ -279,25 +309,9 @@ export default class NavBar {
         const imgSrc = event.target.src;
         const saveUser = new FilterTaskUserManager();
         saveUser.setTaskSelectedUser(imgSrc);
-        dropdownContentFilter.style.display = "none";
+        dropdownContentTask.style.display = "none";
         location.reload();
       }
     });
-
-    // Fecha o menu ao clicar fora do dropdown, bugs e mais bugs
-    // document.addEventListener("click", (event) => {
-    //   if (
-    //     event.target instanceof Node &&
-    //     !dropdownFilter.contains(event.target)
-    //   ) {
-    //     dropdownContentFilter.style.display = "none";
-    //   }
-    //   if (event.target instanceof HTMLImageElement) {
-    //     const imgSrc = event.target.src;
-    //     const saveUser = new FilterTaskUserManager();
-    //     saveUser.setFilterSelectedUser(imgSrc);
-    //     location.reload();
-    //   }
-    // });
   }
 }

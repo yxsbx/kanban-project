@@ -20,6 +20,9 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .img-wrapper-filter {
@@ -39,19 +42,22 @@
 }
 
 .dropdownContent-filter {
-  display: none;
+  display: flex;
   align-self: center;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
-  margin-top: 60px;
+  left: 100%;
+  transform: translateX(10%);
   background-color: #b70000;
-  width: 60px;
+  width: 260px;
+  height: 70px;
+  gap: 10px;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 .dropdownContent-filter img {
   display: block;
-  width: 100%;
+  width: 20%;
 }
 
 .img-wrapper-tasks {
