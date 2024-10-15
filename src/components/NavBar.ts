@@ -6,7 +6,6 @@ class TagManager {
     }
     return JSON.parse(selectedTag);
   }
-
   setTag(selectedTag: string) {
     if (selectedTag === this.getSelectedTag()) {
       localStorage.setItem("selectedTag", JSON.stringify(""));
@@ -24,10 +23,19 @@ class FilterTaskUserManager {
     return JSON.parse(selectedFilterUser);
   }
   setFilterSelectedUser(selectedFilterUser: string) {
-    localStorage.setItem(
-      "selectedFilterUser",
-      JSON.stringify(selectedFilterUser)
-    );
+    let actualFilterUser = localStorage.getItem("selectedFilterUser");
+    if (!actualFilterUser) {
+      return null;
+    }
+    actualFilterUser = JSON.parse(actualFilterUser);
+    if (selectedFilterUser === actualFilterUser) {
+      localStorage.setItem("selectedFilterUser", JSON.stringify(""));
+    } else {
+      localStorage.setItem(
+        "selectedFilterUser",
+        JSON.stringify(selectedFilterUser)
+      );
+    }
   }
   getTaskSelectedUser() {
     const selectedTaskUser = localStorage.getItem("selectedTaskUser");
@@ -37,7 +45,19 @@ class FilterTaskUserManager {
     return JSON.parse(selectedTaskUser);
   }
   setTaskSelectedUser(selectedTaskUser: string) {
-    localStorage.setItem("selectedTaskUser", JSON.stringify(selectedTaskUser));
+    let actualTaskUser = localStorage.getItem("selectedTaskUser");
+    if (!actualTaskUser) {
+      return null;
+    }
+    actualTaskUser = JSON.parse(actualTaskUser);
+    if (selectedTaskUser === actualTaskUser) {
+      localStorage.setItem("selectedTaskUser", JSON.stringify(""));
+    } else {
+      localStorage.setItem(
+        "selectedTaskUser",
+        JSON.stringify(selectedTaskUser)
+      );
+    }
   }
 }
 export default class NavBar {
@@ -47,8 +67,8 @@ export default class NavBar {
   $header: HTMLElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
-  $usersMenu: HTMLDivElement;
-  $usersMenuContainer: HTMLDivElement;
+  $usersFilterMenu: HTMLDivElement;
+  $usersFilterMenuContainer: HTMLDivElement;
   $tagsMenu: HTMLDivElement;
   $tagsContainer: HTMLDivElement;
   tags: string[];
@@ -73,12 +93,14 @@ export default class NavBar {
     ) as HTMLDivElement;
     this.$tagsContainer = tagsContainer;
 
-    const usersMenu = document.querySelector("#js-usersMenu") as HTMLDivElement;
-    this.$usersMenu = usersMenu;
-    const usersMenuContainer = document.querySelector(
-      "#js-usersMenuContainer"
+    const usersFilterMenu = document.querySelector(
+      "#js-usersFilterMenu"
     ) as HTMLDivElement;
-    this.$usersMenuContainer = usersMenuContainer;
+    this.$usersFilterMenu = usersFilterMenu;
+    const usersFilterMenuContainer = document.querySelector(
+      "#js-usersFilterMenuContainer"
+    ) as HTMLDivElement;
+    this.$usersFilterMenuContainer = usersFilterMenuContainer;
 
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
@@ -112,9 +134,11 @@ export default class NavBar {
       "#js-tagsContainer"
     ) as HTMLDivElement;
 
-    this.$usersMenu = document.querySelector("#js-usersMenu") as HTMLDivElement;
-    this.$usersMenuContainer = document.querySelector(
-      "#js-usersMenuContainer"
+    this.$usersFilterMenu = document.querySelector(
+      "#js-usersFilterMenu"
+    ) as HTMLDivElement;
+    this.$usersFilterMenuContainer = document.querySelector(
+      "#js-usersFilterMenuContainer"
     ) as HTMLDivElement;
 
     this.addEventListeners();
@@ -124,15 +148,15 @@ export default class NavBar {
       <nav class="pl-10 flex items-center justify-around bg-gray-100 border-b-2">
         <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
         <div id="js-tags" class="flex items-center justify-beetwen navBar h-16">
-          <div id="js-filterMenu" class="flex flex-col items-center justify-center bg-blue-500 w-24 h-full cursor-pointer">
-            <p class="font-thin text-lg">Filtros</p>
-            <div id="js-filterMenuContainer" class="absolute shadow-xl hidden items-left justify-center flex-col mt-56 w-36 h-40">
+          <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer">
+            <p id="js-textDivFilter" class="font-thin text-lg">Filtros</p>
+            <div id="js-filterMenuContainer" class="absolute m-1 top-full shadow-xl hidden items-left justify-center flex-col w-36 h-40">
               <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 h-full">
                 <p class="font-light text-lg">Tags</p> 
                 <p class="absolute text-lg left-3/4 translate-x-2">></p>
                 ${this.renderTagsForFilter()}
               </div>
-              <div id="js-usersMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 h-full">
+              <div id="js-usersFilterMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 h-full">
                 <p class="font-light text-lg">Usuário</p>
                 <p class="absolute text-lg left-3/4 translate-x-2">></p>
                 ${usersFilterHTML}
@@ -186,24 +210,36 @@ export default class NavBar {
     const img_charmander: any = await this.getUsersAPI("charizard");
     const img_blastoise: any = await this.getUsersAPI("blastoise");
     const img_bulbasaur: any = await this.getUsersAPI("bulbasaur");
-    // console.log(img_pikachu);
+    let selectedUserText: string;
+    let container: string;
+    if (!this.selectedFilterUser) {
+      container = "hidden";
+      selectedUserText = `
+        <p class="text-center row-start-1 row-span-2 col-start-1 col-span-1">Selecione um usuário:</p>
+      `;
+    } else {
+      container = "block";
+      selectedUserText = `
+        <p class="absolute bottom-2 row-start-2 row-span-1 col-start-1 col-span-1">Usuário Atual</p>
+      `;
+    }
 
     return `
-      <div id="js-usersMenuContainer" class="bg-red-100 w-80 h-full top-0 rounded-bl-md absolute left-full hidden grid-rows-2 grid-cols-3 items-center justify-items-center justify-center"> 
-        <div id="js-selectedFilterUser" class="w-16 h-16 row-start-1 row-span-2 col-start-1 col-span-1">
+      <div id="js-usersFilterMenuContainer" class="cursor-default bg-gray-300 shadow-xl w-80 h-full top-0 rounded-bl-md absolute left-full hidden grid-rows-2 grid-cols-3 items-center justify-items-center justify-center"> 
+        <div id="js-selectedFilterUser" class="${container} drop-shadow-lg cursor-pointer w-16 h-16 row-start-1 row-span-2 col-start-1 col-span-1">
             <img class="" src="${this.selectedFilterUser}" alt="" />
         </div>
-        <div class="w-12 row-start-1 row-span-1 col-start-2 col-span-1">
+        <div class="drop-shadow-lg cursor-pointer w-12 row-start-1 row-span-1 col-start-2 col-span-1">
           <img src="${img_pikachu}" alt="" />
         </div>
-        <div class="w-12 row-start-2 row-span-1 col-start-2 col-span-1">
+        <div class="drop-shadow-lg cursor-pointer w-12 row-start-2 row-span-1 col-start-2 col-span-1">
           <img src="${img_bulbasaur}" alt="" />
         </div>
-        <p class="row-start-2 row-span-1 col-start-1 col-span-1">Usuário Atual</p>
-        <div class="w-12 row-start-1 row-span-1 col-start-3 col-span-1">
+        ${selectedUserText}
+        <div class="drop-shadow-lg cursor-pointer w-12 row-start-1 row-span-1 col-start-3 col-span-1">
           <img src="${img_charmander}" alt="" />
         </div>
-        <div class="w-12 row-start-2 row-span-1 col-start-3 col-span-1">
+        <div class="drop-shadow-lg cursor-pointer w-12 row-start-2 row-span-1 col-start-3 col-span-1">
           <img src="${img_blastoise}" alt="" />
         </div>
       </div>
@@ -217,9 +253,9 @@ export default class NavBar {
     // console.log(img_pikachu);
 
     return `
-      <div class="dropdown">
-        <div id="selectedFilterUser" class="selectedFilterUser">
-          <div id="img-wrapper-tasks" class="img-wrapper-tasks"> <!-- Adicionando um wrapper para a imagem -->
+      <div class="relative flex flex-col w-14 h-14 rounded-full bg-blue-400">
+        <div id="selectedFilterUser" class="w-full h-full overflow-hidden flex items-center justify-center">
+          <div id="img-wrapper-tasks" class="img-wrapper-tasks">
             <img data-id="1" class="img" src="${this.selectedTaskUser}" alt="" />
           </div>
         </div>
@@ -233,44 +269,75 @@ export default class NavBar {
     `;
   }
   addEventListeners(): void {
-    this.$header?.addEventListener("click", (event) => {
-      const target = event.target as HTMLElement;
-      const spanElement = target.closest("span");
-
-      if (spanElement) {
-        const selectedTag = String(spanElement.textContent?.trim());
-        const tagManager = new TagManager();
-        tagManager.setTag(selectedTag);
-        // console.log(selectedTag);
-        location.reload(); // fica pro cara do update resolver kkkkk
-      }
-    });
-
     this.$filterMenu?.addEventListener("mouseenter", () => {
       this.$filterMenuContainer?.classList.remove("hidden");
       this.$filterMenuContainer?.classList.add("flex");
+      this.$filterMenu?.classList.add(
+        "bg-gray-200",
+        "border-4",
+        "hover:border-b-indigo-400"
+      );
+      const text = document.querySelector(
+        "#js-textDivFilter"
+      ) as HTMLParagraphElement;
+      text.innerHTML = "Filtrar por:";
     });
     this.$filterMenu?.addEventListener("mouseleave", () => {
       this.$filterMenuContainer?.classList.remove("flex");
       this.$filterMenuContainer?.classList.add("hidden");
+      this.$filterMenu?.classList.remove(
+        "bg-gray-200",
+        "border-4",
+        "hover:border-b-indigo-400"
+      );
+      const text = document.querySelector(
+        "#js-textDivFilter"
+      ) as HTMLParagraphElement;
+      text.innerHTML = "Filtros";
     });
-
     this.$tagsMenu?.addEventListener("mouseenter", () => {
       this.$tagsContainer?.classList.remove("hidden");
       this.$tagsContainer?.classList.add("grid");
+      this.$tagsMenu?.classList.remove("bg-gray-200");
+      this.$tagsMenu?.classList.add("bg-gray-300");
     });
     this.$tagsMenu?.addEventListener("mouseleave", () => {
       this.$tagsContainer?.classList.remove("grid");
       this.$tagsContainer?.classList.add("hidden");
+      this.$tagsMenu?.classList.remove("bg-gray-300");
+      this.$tagsMenu?.classList.add("bg-gray-200");
     });
-
-    this.$usersMenu?.addEventListener("mouseenter", () => {
-      this.$usersMenuContainer?.classList.remove("hidden");
-      this.$usersMenuContainer?.classList.add("grid");
+    this.$tagsContainer?.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const spanElement = target.closest("span");
+      if (spanElement) {
+        const selectedTag = String(spanElement.textContent?.trim());
+        const tagManager = new TagManager();
+        tagManager.setTag(selectedTag);
+        location.reload(); // fica pro cara do update resolver kkkkk
+      }
     });
-    this.$usersMenu?.addEventListener("mouseleave", () => {
-      this.$usersMenuContainer?.classList.remove("grid");
-      this.$usersMenuContainer?.classList.add("hidden");
+    this.$usersFilterMenu?.addEventListener("mouseenter", () => {
+      this.$usersFilterMenuContainer?.classList.remove("hidden");
+      this.$usersFilterMenuContainer?.classList.add("grid");
+      this.$usersFilterMenu?.classList.remove("bg-gray-200");
+      this.$usersFilterMenu?.classList.add("bg-gray-300");
+    });
+    this.$usersFilterMenu?.addEventListener("mouseleave", () => {
+      this.$usersFilterMenuContainer?.classList.remove("grid");
+      this.$usersFilterMenuContainer?.classList.add("hidden");
+      this.$usersFilterMenu?.classList.remove("bg-gray-300");
+      this.$usersFilterMenu?.classList.add("bg-gray-200");
+    });
+    this.$usersFilterMenuContainer?.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const spanElement = target.closest("img");
+      if (spanElement) {
+        const selectedFilterUser = String(spanElement.src?.trim());
+        const filterTaskUserManager = new FilterTaskUserManager();
+        filterTaskUserManager.setFilterSelectedUser(selectedFilterUser);
+        location.reload(); // fica pro cara do update resolver kkkkk
+      }
     });
 
     // MELHORAR ISSO, MDS QUE COISA HORROROSA
