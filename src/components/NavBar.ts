@@ -23,13 +23,13 @@ class FilterTaskUserManager {
     return JSON.parse(selectedFilterUser);
   }
   setFilterSelectedUser(selectedFilterUser: string) {
-    let actualFilterUser = localStorage.getItem("selectedFilterUser");
-    if (!actualFilterUser) {
-      return null;
-    }
-    actualFilterUser = JSON.parse(actualFilterUser);
-    if (selectedFilterUser === actualFilterUser) {
-      localStorage.setItem("selectedFilterUser", JSON.stringify(""));
+    const actualFilterUser = localStorage.getItem("selectedFilterUser");
+    const parsedFilterUser = actualFilterUser
+      ? JSON.parse(actualFilterUser)
+      : null;
+
+    if (parsedFilterUser === selectedFilterUser) {
+      localStorage.removeItem("selectedFilterUser");
     } else {
       localStorage.setItem(
         "selectedFilterUser",
@@ -45,13 +45,11 @@ class FilterTaskUserManager {
     return JSON.parse(selectedTaskUser);
   }
   setTaskSelectedUser(selectedTaskUser: string) {
-    let actualTaskUser = localStorage.getItem("selectedTaskUser");
-    if (!actualTaskUser) {
-      return null;
-    }
-    actualTaskUser = JSON.parse(actualTaskUser);
-    if (selectedTaskUser === actualTaskUser) {
-      localStorage.setItem("selectedTaskUser", JSON.stringify(""));
+    const actualTaskUser = localStorage.getItem("selectedTaskUser");
+    const parsedTaskUser = actualTaskUser ? JSON.parse(actualTaskUser) : null;
+
+    if (parsedTaskUser === selectedTaskUser) {
+      localStorage.removeItem("selectedTaskUser");
     } else {
       localStorage.setItem(
         "selectedTaskUser",
@@ -197,11 +195,11 @@ export default class NavBar {
               ? "relative bg-slate-600 rounded-lg text-white"
               : ""
           } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
-              tag === this.selectedTag
-                ? `
+            tag === this.selectedTag
+              ? `
             <div>${this.selectedTag}</div>`
-                : tag
-            }
+              : tag
+          }
           </span>
         `
           )
