@@ -283,8 +283,8 @@ export default class NavBar {
     // console.log(img_pikachu);
 
     return `
-      <div id="js-selectedUserTaskContainer" class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
-        <div class="w-14 h-14 bg-neutral-300 rounded-full overflow-hidden flex items-center justify-center">
+      <div class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
+        <div id="js-selectedUserTaskContainer" class="w-14 h-14 bg-neutral-300 rounded-full overflow-hidden flex items-center justify-center">
           <div class="flex items-center justify-center w-full h-full rounded-full overflow-hidden cursor-pointer">
             <img class="" src="${this.selectedTaskUser}" alt="" />
           </div>
@@ -364,7 +364,8 @@ export default class NavBar {
           location.reload(); // fica pro cara do update resolver kkkkk
         }
       });
-      this.$selectedUserTaskContainer?.addEventListener("mouseleave", () => {
+      const container = this.$selectedUserTaskContainer?.parentElement;
+      container?.addEventListener("mouseleave", () => {
         this.$usersTaskMenu.classList.remove("flex");
         this.$usersTaskMenu.classList.add("hidden");
       });
