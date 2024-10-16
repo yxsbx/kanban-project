@@ -8,7 +8,7 @@ class TagManager {
   }
   setTag(selectedTag: string) {
     if (selectedTag === this.getSelectedTag()) {
-      localStorage.setItem("selectedTag", JSON.stringify(""));
+      localStorage.removeItem("selectedTag");
     } else {
       localStorage.setItem("selectedTag", JSON.stringify(selectedTag));
     }
@@ -69,47 +69,43 @@ export default class NavBar {
   $usersFilterMenuContainer: HTMLDivElement;
   $selectedUserTaskContainer: HTMLDivElement;
   $usersTaskMenu: HTMLDivElement;
+  $searchForm: HTMLFormElement;
   $tagsMenu: HTMLDivElement;
   $tagsContainer: HTMLDivElement;
   tags: string[];
 
   constructor() {
-    const header = document.querySelector("#js-header") as HTMLElement;
-    this.$header = header;
+    this.$header = document.querySelector("#js-header") as HTMLElement;
 
-    const filterMenu = document.querySelector(
+    this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
-    this.$filterMenu = filterMenu;
-    const filterMenuContainer = document.querySelector(
+    this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
     ) as HTMLDivElement;
-    this.$filterMenuContainer = filterMenuContainer;
 
-    const tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
-    this.$tagsMenu = tagsMenu;
-    const tagsContainer = document.querySelector(
+    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
+    this.$tagsContainer = document.querySelector(
       "#js-tagsContainer"
     ) as HTMLDivElement;
-    this.$tagsContainer = tagsContainer;
 
-    const usersFilterMenu = document.querySelector(
+    this.$usersFilterMenu = document.querySelector(
       "#js-usersFilterMenu"
     ) as HTMLDivElement;
-    this.$usersFilterMenu = usersFilterMenu;
-    const usersFilterMenuContainer = document.querySelector(
+    this.$usersFilterMenuContainer = document.querySelector(
       "#js-usersFilterMenuContainer"
     ) as HTMLDivElement;
-    this.$usersFilterMenuContainer = usersFilterMenuContainer;
 
-    const usersTaskMenu = document.querySelector(
+    this.$usersTaskMenu = document.querySelector(
       "#js-usersTaskMenu"
     ) as HTMLDivElement;
-    this.$usersTaskMenu = usersTaskMenu;
-    const selectedUserTaskContainer = document.querySelector(
+    this.$selectedUserTaskContainer = document.querySelector(
       "#js-selectedUserTaskContainer"
     ) as HTMLDivElement;
-    this.$selectedUserTaskContainer = selectedUserTaskContainer;
+
+    this.$searchForm = document.querySelector(
+      "#js-searchForm"
+    ) as HTMLFormElement;
 
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
@@ -122,14 +118,8 @@ export default class NavBar {
     this.init();
   }
   async init(): Promise<void> {
-    const usersFilterHTML = await this.renderUsersForFilter();
-    const usersTasksHTML = await this.renderUsersForTasks();
-
     if (this.$header) {
-      this.$header.innerHTML = this.renderNavBar(
-        usersFilterHTML,
-        usersTasksHTML
-      );
+      this.$header.innerHTML = await this.renderNavBar();
     }
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
@@ -157,31 +147,45 @@ export default class NavBar {
       "#js-selectedUserTaskContainer"
     ) as HTMLDivElement;
 
+    this.$searchForm = document.querySelector(
+      "#js-searchForm"
+    ) as HTMLFormElement;
+
     this.addEventListeners();
   }
-  renderNavBar(usersFilterHTML: string, usersTasksHTML: string): string {
+  async renderNavBar(): Promise<string> {
     return `
-      <nav class="pl-10 flex items-center justify-around bg-gray-100 border-b-2">
-        <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
-        <div id="js-tags" class="flex items-center justify-beetwen navBar h-16">
-          <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400"">
-            <p id="js-textDivFilter" class="font-thin text-lg">Filtros</p>
-            <div id="js-filterMenuContainer" class="absolute m-1 top-full shadow-xl hidden items-left justify-center flex-col w-36 h-40">
-              <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
-                <p class="font-light text-lg">Tags</p> 
-                <p class="absolute text-lg left-3/4 translate-x-2">></p>
-                ${this.renderTagsForFilter()}
-              </div>
-              <div id="js-usersFilterMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
-                <p class="font-light text-lg">Usuário</p>
-                <p class="absolute text-lg left-3/4 translate-x-2">></p>
-                ${usersFilterHTML}
-              </div>
+      <nav class="pl-10 pr-10 flex flex-wrap justify-between items-center bg-gray-100 border-b-2">
+        <div class="flex items-center flex-1 justify-evenly">
+          <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
+          ${await this.renderFilters()}
+        </div>
+        ${this.renderSearchBar()}
+        ${await this.renderUsersForTasks()}
+      </nav>
+    `;
+  }
+  async renderFilters() {
+    const usersFilterHTML = await this.renderUsersForFilter();
+
+    return `
+      <div class="flex items-center justify-beetwen h-16">
+        <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400"">
+          <p id="js-textDivFilter" class="font-thin text-lg">Filtros</p>
+          <div id="js-filterMenuContainer" class="absolute m-1 top-full shadow-xl hidden items-left justify-center flex-col w-36 h-40">
+            <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
+              <p class="font-light text-lg">Tags</p> 
+              <p class="absolute text-lg left-3/4 translate-x-2">></p>
+              ${this.renderTagsForFilter()}
+            </div>
+            <div id="js-usersFilterMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
+              <p class="font-light text-lg">Usuário</p>
+              <p class="absolute text-lg left-3/4 translate-x-2">></p>
+              ${usersFilterHTML}
             </div>
           </div>
         </div>
-        ${usersTasksHTML}
-      </nav>
+      </div>
     `;
   }
   renderTagsForFilter() {
@@ -195,11 +199,11 @@ export default class NavBar {
               ? "relative bg-slate-600 rounded-lg text-white"
               : ""
           } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
-            tag === this.selectedTag
-              ? `
+              tag === this.selectedTag
+                ? `
             <div>${this.selectedTag}</div>`
-              : tag
-          }
+                : tag
+            }
           </span>
         `
           )
@@ -261,6 +265,16 @@ export default class NavBar {
       </div>
     `;
   }
+
+  // FALTA USAR O VALUE PARA FILTRAR AS TASKS
+  renderSearchBar() {
+    return `
+    <form method="post" id="js-searchForm" class="w-1/5 flex-1">
+      <input type="text" name="search" value="" placeholder="Pesquise pelo nome da Tarefa." maxlength="64" class="w-full block p-2 px-3 bg-white border border-slate-300 rounded-full text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none invalid:border-pink-500 invalid:placeholder-pink-500 focus:invalid:border-pink-500 focus:invalid:ring-pink-500" />
+    </form>
+    `;
+  }
+
   async renderUsersForTasks() {
     const img_pikachu: any = await this.getUsersAPI("pikachu");
     const img_charmander: any = await this.getUsersAPI("charizard");
@@ -269,13 +283,13 @@ export default class NavBar {
     // console.log(img_pikachu);
 
     return `
-      <div id="js-selectedUserTaskContainer" class="absolute top-1 gap-1 flex flex-col items-center justify-center bg-transparent">
+      <div id="js-selectedUserTaskContainer" class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
         <div class="w-14 h-14 bg-neutral-300 rounded-full overflow-hidden flex items-center justify-center">
           <div class="flex items-center justify-center w-full h-full rounded-full overflow-hidden cursor-pointer">
             <img class="" src="${this.selectedTaskUser}" alt="" />
           </div>
         </div>
-        <div id="js-usersTaskMenu" class="rounded-b-md shadow-xl hidden flex-col items-center justify-center bg-gray-200 w-20 shadow-lg">
+        <div id="js-usersTaskMenu" class="absolute top-full rounded-b-md shadow-xl hidden flex-col items-center justify-center bg-gray-200 w-20 shadow-lg">
           <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_pikachu}" alt="" />
           <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_bulbasaur}" alt="" />
           <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_charmander}" alt="" />
@@ -284,6 +298,7 @@ export default class NavBar {
       </div>
     `;
   }
+
   addEventListeners(): void {
     this.$filterMenu?.addEventListener("mouseenter", () => {
       this.$filterMenuContainer?.classList.remove("hidden");
@@ -337,7 +352,6 @@ export default class NavBar {
         location.reload(); // fica pro cara do update resolver kkkkk
       }
     });
-
     this.$selectedUserTaskContainer?.addEventListener("mouseenter", () => {
       this.$usersTaskMenu.classList.remove("hidden");
       this.$usersTaskMenu.classList.add("flex");
@@ -354,6 +368,49 @@ export default class NavBar {
         this.$usersTaskMenu.classList.remove("flex");
         this.$usersTaskMenu.classList.add("hidden");
       });
+    });
+    this.$searchForm?.addEventListener("focusin", () => {
+      const searchInput = this.$searchForm
+        .firstElementChild as HTMLInputElement;
+      searchInput.addEventListener("input", () => {
+        if (searchInput.value.trim() === "") {
+          console.log("vazio");
+          searchInput.setCustomValidity(
+            "Por favor, digite o nome da sua Tarefa!"
+          );
+          searchInput.placeholder = "Por favor, digite o nome da sua Tarefa!";
+        } else {
+          searchInput.setCustomValidity("");
+          searchInput.placeholder = "Pesquise pelo nome da Tarefa.";
+          console.log(searchInput.value);
+        }
+      });
+    });
+    this.$searchForm?.addEventListener("focusout", () => {
+      const searchInput = this.$searchForm
+        .firstElementChild as HTMLInputElement;
+      if (searchInput.value.trim() === "") {
+        searchInput.value = "";
+        searchInput.placeholder = "Pesquise pelo nome da Tarefa.";
+        searchInput.setCustomValidity("");
+      }
+    });
+    this.$searchForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target as HTMLFormElement);
+      const searchInput = this.$searchForm
+        .firstElementChild as HTMLInputElement;
+      const searchValue = String(formData.get("search"));
+      if (searchValue.trim() === "") {
+        searchInput.placeholder = "Por favor, digite o nome da sua Tarefa!";
+        searchInput.setCustomValidity(
+          "Por favor, digite o nome da sua Tarefa!"
+        );
+      }
+
+      this.$searchForm.reset();
+      // console.log(searchValue);
     });
   }
 }
