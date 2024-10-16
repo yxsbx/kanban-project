@@ -2,10 +2,11 @@ class TagManager {
   getSelectedTag() {
     const selectedTag = localStorage.getItem("selectedTag");
     if (!selectedTag) {
-      return null;
+      return "";
     }
     return JSON.parse(selectedTag);
   }
+
   setTag(selectedTag: string) {
     if (selectedTag === this.getSelectedTag()) {
       localStorage.removeItem("selectedTag");
@@ -18,10 +19,11 @@ class FilterTaskUserManager {
   getFilterSelectedUser() {
     const selectedFilterUser = localStorage.getItem("selectedFilterUser");
     if (!selectedFilterUser) {
-      return null;
+      return "";
     }
     return JSON.parse(selectedFilterUser);
   }
+
   setFilterSelectedUser(selectedFilterUser: string) {
     const actualFilterUser = localStorage.getItem("selectedFilterUser");
     const parsedFilterUser = actualFilterUser
@@ -37,13 +39,15 @@ class FilterTaskUserManager {
       );
     }
   }
+
   getTaskSelectedUser() {
     const selectedTaskUser = localStorage.getItem("selectedTaskUser");
     if (!selectedTaskUser) {
-      return null;
+      return "https://www.shutterstock.com/image-vector/anonymous-icon-260nw-436441336.jpg";
     }
     return JSON.parse(selectedTaskUser);
   }
+
   setTaskSelectedUser(selectedTaskUser: string) {
     const actualTaskUser = localStorage.getItem("selectedTaskUser");
     const parsedTaskUser = actualTaskUser ? JSON.parse(actualTaskUser) : null;
@@ -59,9 +63,9 @@ class FilterTaskUserManager {
   }
 }
 export default class NavBar {
-  selectedTag: string;
-  selectedFilterUser: string;
-  selectedTaskUser: string;
+  selectedTag: string = "";
+  selectedFilterUser: string = "";
+  selectedTaskUser: string = "";
   $header: HTMLElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
@@ -76,83 +80,83 @@ export default class NavBar {
 
   constructor() {
     this.$header = document.querySelector("#js-header") as HTMLElement;
-
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
     this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
     ) as HTMLDivElement;
-
     this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
     this.$tagsContainer = document.querySelector(
       "#js-tagsContainer"
     ) as HTMLDivElement;
-
     this.$usersFilterMenu = document.querySelector(
       "#js-usersFilterMenu"
     ) as HTMLDivElement;
     this.$usersFilterMenuContainer = document.querySelector(
       "#js-usersFilterMenuContainer"
     ) as HTMLDivElement;
-
     this.$usersTaskMenu = document.querySelector(
       "#js-usersTaskMenu"
     ) as HTMLDivElement;
     this.$selectedUserTaskContainer = document.querySelector(
       "#js-selectedUserTaskContainer"
     ) as HTMLDivElement;
-
     this.$searchForm = document.querySelector(
       "#js-searchForm"
     ) as HTMLFormElement;
 
+    this.tags = ["Front-End", "Back-End", "UX / UI", "Data"];
+    this.loadSelectedValues();
+    this.init();
+  }
+
+  loadSelectedValues() {
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
 
     const userManager = new FilterTaskUserManager();
     this.selectedFilterUser = userManager.getFilterSelectedUser();
     this.selectedTaskUser = userManager.getTaskSelectedUser();
-
-    this.tags = ["Front-End", "Back-End", "UX / UI", "Data"];
-    this.init();
   }
+
   async init(): Promise<void> {
+    this.loadSelectedValues();
     if (this.$header) {
       this.$header.innerHTML = await this.renderNavBar();
     }
+    this.updateDOMReferences();
+    this.addEventListeners();
+  }
+
+  updateDOMReferences() {
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
     this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
     ) as HTMLDivElement;
-
     this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
     this.$tagsContainer = document.querySelector(
       "#js-tagsContainer"
     ) as HTMLDivElement;
-
     this.$usersFilterMenu = document.querySelector(
       "#js-usersFilterMenu"
     ) as HTMLDivElement;
     this.$usersFilterMenuContainer = document.querySelector(
       "#js-usersFilterMenuContainer"
     ) as HTMLDivElement;
-
     this.$usersTaskMenu = document.querySelector(
       "#js-usersTaskMenu"
     ) as HTMLDivElement;
     this.$selectedUserTaskContainer = document.querySelector(
       "#js-selectedUserTaskContainer"
     ) as HTMLDivElement;
-
     this.$searchForm = document.querySelector(
       "#js-searchForm"
     ) as HTMLFormElement;
-
-    this.addEventListeners();
   }
+
   async renderNavBar(): Promise<string> {
     return `
       <nav class="pl-10 pr-10 flex flex-wrap justify-between items-center bg-gray-100 border-b-2">
@@ -165,9 +169,9 @@ export default class NavBar {
       </nav>
     `;
   }
+
   async renderFilters() {
     const usersFilterHTML = await this.renderUsersForFilter();
-
     return `
       <div class="flex items-center justify-beetwen h-16">
         <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400"">
@@ -188,6 +192,7 @@ export default class NavBar {
       </div>
     `;
   }
+
   renderTagsForFilter() {
     return `
       <div id="js-tagsContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
@@ -199,11 +204,11 @@ export default class NavBar {
               ? "relative bg-slate-600 rounded-lg text-white"
               : ""
           } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
-              tag === this.selectedTag
-                ? `
+            tag === this.selectedTag
+              ? `
             <div>${this.selectedTag}</div>`
-                : tag
-            }
+              : tag
+          }
           </span>
         `
           )
@@ -211,6 +216,7 @@ export default class NavBar {
       </div>
     `;
   }
+
   async getUsersAPI(pokemonName: string) {
     try {
       const response: Response = await fetch(
@@ -219,17 +225,17 @@ export default class NavBar {
       const pokemonData: any = await response.json();
       const pokemonImgURL: string =
         pokemonData.sprites.other.dream_world.front_default;
-
       return pokemonImgURL;
     } catch (error) {
       console.error("Opa, pokemom errado", error);
     }
   }
+
   async renderUsersForFilter() {
-    const img_pikachu: any = await this.getUsersAPI("pikachu");
-    const img_charmander: any = await this.getUsersAPI("charizard");
-    const img_blastoise: any = await this.getUsersAPI("blastoise");
-    const img_bulbasaur: any = await this.getUsersAPI("bulbasaur");
+    const img_pikachu = await this.getUsersAPI("pikachu");
+    const img_charmander = await this.getUsersAPI("charizard");
+    const img_blastoise = await this.getUsersAPI("blastoise");
+    const img_bulbasaur = await this.getUsersAPI("bulbasaur");
     let selectedUserText: string;
     let display: string;
     if (!this.selectedFilterUser) {
@@ -276,11 +282,10 @@ export default class NavBar {
   }
 
   async renderUsersForTasks() {
-    const img_pikachu: any = await this.getUsersAPI("pikachu");
-    const img_charmander: any = await this.getUsersAPI("charizard");
-    const img_blastoise: any = await this.getUsersAPI("blastoise");
-    const img_bulbasaur: any = await this.getUsersAPI("bulbasaur");
-    // console.log(img_pikachu);
+    const img_pikachu = await this.getUsersAPI("pikachu");
+    const img_charmander = await this.getUsersAPI("charizard");
+    const img_blastoise = await this.getUsersAPI("blastoise");
+    const img_bulbasaur = await this.getUsersAPI("bulbasaur");
 
     return `
       <div class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
@@ -331,7 +336,8 @@ export default class NavBar {
         const selectedTag = String(spanElement.textContent?.trim());
         const tagManager = new TagManager();
         tagManager.setTag(selectedTag);
-        location.reload(); // fica pro cara do update resolver kkkkk
+        this.init();
+        // location.reload(); // fica pro cara do update resolver kkkkk
       }
     });
     this.$usersFilterMenu?.addEventListener("mouseenter", () => {
@@ -349,7 +355,8 @@ export default class NavBar {
         const selectedFilterUser = String(spanElement.src?.trim());
         const filterTaskUserManager = new FilterTaskUserManager();
         filterTaskUserManager.setFilterSelectedUser(selectedFilterUser);
-        location.reload(); // fica pro cara do update resolver kkkkk
+        this.init();
+        // location.reload(); // fica pro cara do update resolver kkkkk
       }
     });
     this.$selectedUserTaskContainer?.addEventListener("mouseenter", () => {
@@ -361,7 +368,8 @@ export default class NavBar {
           const saveUser = new FilterTaskUserManager();
           saveUser.setTaskSelectedUser(imgSrc);
 
-          location.reload(); // fica pro cara do update resolver kkkkk
+          this.init();
+          // location.reload(); // fica pro cara do update resolver kkkkk
         }
       });
       const container = this.$selectedUserTaskContainer?.parentElement;
