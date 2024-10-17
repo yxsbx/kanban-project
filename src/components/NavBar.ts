@@ -67,6 +67,7 @@ export default class NavBar {
   selectedFilterUser: string = "";
   selectedTaskUser: string = "";
   $header: HTMLElement;
+  $textDivFilter: HTMLParagraphElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
   $usersFilterMenu: HTMLDivElement;
@@ -80,6 +81,9 @@ export default class NavBar {
 
   constructor() {
     this.$header = document.querySelector("#js-header") as HTMLElement;
+    this.$textDivFilter = document.querySelector(
+      "#js-textDivFilter"
+    ) as HTMLParagraphElement;
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
@@ -130,6 +134,21 @@ export default class NavBar {
   }
 
   updateDOMReferences() {
+    this.$textDivFilter = document.querySelector(
+      "#js-textDivFilter"
+    ) as HTMLParagraphElement;
+    if (
+      localStorage.getItem("selectedTag") ||
+      localStorage.getItem("selectedFilterUser")
+    ) {
+      this.$textDivFilter.innerHTML = "Filtro Ativo";
+      this.$textDivFilter.classList.add("text-blue-700");
+      this.$textDivFilter.classList.add("border-b-4", "border-b-indigo-400");
+    } else {
+      this.$textDivFilter.innerHTML = "Filtros";
+      this.$textDivFilter.classList.remove("text-blue-700");
+      this.$textDivFilter.classList.remove("border-b-4", "border-b-indigo-400");
+    }
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
@@ -174,8 +193,8 @@ export default class NavBar {
     const usersFilterHTML = await this.renderUsersForFilter();
     return `
       <div class="flex items-center justify-beetwen h-16">
-        <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400"">
-          <p id="js-textDivFilter" class="font-thin text-lg">Filtros</p>
+        <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400">
+          <p id="js-textDivFilter" class="font-thin text-lg"></p>
           <div id="js-filterMenuContainer" class="absolute m-1 top-full shadow-xl hidden items-left justify-center flex-col w-36 h-40">
             <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
               <p class="font-light text-lg">Tags</p> 
@@ -305,80 +324,87 @@ export default class NavBar {
   }
 
   addEventListeners(): void {
-    this.$filterMenu?.addEventListener("mouseenter", () => {
-      this.$filterMenuContainer?.classList.remove("hidden");
-      this.$filterMenuContainer?.classList.add("flex");
-      const text = document.querySelector(
-        "#js-textDivFilter"
-      ) as HTMLParagraphElement;
-      text.innerHTML = "Filtrar por:";
+    this.$filterMenu.addEventListener("mouseenter", () => {
+      this.$filterMenuContainer.classList.remove("hidden");
+      this.$filterMenuContainer.classList.add("flex");
+      this.$textDivFilter.innerHTML = "Filtrar por:";
+      this.$textDivFilter.classList.remove("border-b-4", "border-b-indigo-400");
     });
-    this.$filterMenu?.addEventListener("mouseleave", () => {
-      this.$filterMenuContainer?.classList.remove("flex");
-      this.$filterMenuContainer?.classList.add("hidden");
-      const text = document.querySelector(
-        "#js-textDivFilter"
-      ) as HTMLParagraphElement;
-      text.innerHTML = "Filtros";
+    this.$filterMenu.addEventListener("mouseleave", () => {
+      this.$filterMenuContainer.classList.remove("flex");
+      this.$filterMenuContainer.classList.add("hidden");
+      if (
+        localStorage.getItem("selectedTag") ||
+        localStorage.getItem("selectedFilterUser")
+      ) {
+        this.$textDivFilter.innerHTML = "Filtro Ativo";
+        this.$textDivFilter.classList.add("text-blue-700");
+        this.$textDivFilter.classList.add("border-b-4", "border-b-indigo-400");
+      } else {
+        this.$textDivFilter.innerHTML = "Filtros";
+        this.$textDivFilter.classList.remove("text-blue-700");
+        this.$textDivFilter.classList.remove(
+          "border-b-4",
+          "border-b-indigo-400"
+        );
+      }
     });
-    this.$tagsMenu?.addEventListener("mouseenter", () => {
-      this.$tagsContainer?.classList.remove("hidden");
-      this.$tagsContainer?.classList.add("grid");
+    this.$tagsMenu.addEventListener("mouseenter", () => {
+      this.$tagsContainer.classList.remove("hidden");
+      this.$tagsContainer.classList.add("grid");
     });
-    this.$tagsMenu?.addEventListener("mouseleave", () => {
-      this.$tagsContainer?.classList.remove("grid");
-      this.$tagsContainer?.classList.add("hidden");
+    this.$tagsMenu.addEventListener("mouseleave", () => {
+      this.$tagsContainer.classList.remove("grid");
+      this.$tagsContainer.classList.add("hidden");
     });
-    this.$tagsContainer?.addEventListener("click", (event) => {
+    this.$tagsContainer.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
-      const spanElement = target.closest("span");
+      const spanElement = target.closest("span") as HTMLSpanElement;
       if (spanElement) {
         const selectedTag = String(spanElement.textContent?.trim());
         const tagManager = new TagManager();
         tagManager.setTag(selectedTag);
         this.init();
-        // location.reload(); // fica pro cara do update resolver kkkkk
       }
     });
-    this.$usersFilterMenu?.addEventListener("mouseenter", () => {
-      this.$usersFilterMenuContainer?.classList.remove("hidden");
-      this.$usersFilterMenuContainer?.classList.add("grid");
+    this.$usersFilterMenu.addEventListener("mouseenter", () => {
+      this.$usersFilterMenuContainer.classList.remove("hidden");
+      this.$usersFilterMenuContainer.classList.add("grid");
     });
-    this.$usersFilterMenu?.addEventListener("mouseleave", () => {
-      this.$usersFilterMenuContainer?.classList.remove("grid");
-      this.$usersFilterMenuContainer?.classList.add("hidden");
+    this.$usersFilterMenu.addEventListener("mouseleave", () => {
+      this.$usersFilterMenuContainer.classList.remove("grid");
+      this.$usersFilterMenuContainer.classList.add("hidden");
     });
-    this.$usersFilterMenuContainer?.addEventListener("click", (event) => {
+    this.$usersFilterMenuContainer.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
       const spanElement = target.closest("img");
       if (spanElement) {
-        const selectedFilterUser = String(spanElement.src?.trim());
+        const selectedFilterUser = String(spanElement.src);
         const filterTaskUserManager = new FilterTaskUserManager();
         filterTaskUserManager.setFilterSelectedUser(selectedFilterUser);
         this.init();
-        // location.reload(); // fica pro cara do update resolver kkkkk
       }
     });
-    this.$selectedUserTaskContainer?.addEventListener("mouseenter", () => {
+    this.$selectedUserTaskContainer.addEventListener("mouseenter", () => {
       this.$usersTaskMenu.classList.remove("hidden");
       this.$usersTaskMenu.classList.add("flex");
-      this.$usersTaskMenu?.addEventListener("click", (event) => {
+      this.$usersTaskMenu.addEventListener("click", (event) => {
         if (event.target instanceof HTMLImageElement) {
           const imgSrc = event.target.src;
           const saveUser = new FilterTaskUserManager();
           saveUser.setTaskSelectedUser(imgSrc);
 
           this.init();
-          // location.reload(); // fica pro cara do update resolver kkkkk
         }
       });
-      const container = this.$selectedUserTaskContainer?.parentElement;
-      container?.addEventListener("mouseleave", () => {
+      const container = this.$selectedUserTaskContainer
+        .parentElement as HTMLDivElement;
+      container.addEventListener("mouseleave", () => {
         this.$usersTaskMenu.classList.remove("flex");
         this.$usersTaskMenu.classList.add("hidden");
       });
     });
-    this.$searchForm?.addEventListener("focusin", () => {
+    this.$searchForm.addEventListener("focusin", () => {
       const searchInput = this.$searchForm
         .firstElementChild as HTMLInputElement;
       searchInput.addEventListener("input", () => {
@@ -395,7 +421,7 @@ export default class NavBar {
         }
       });
     });
-    this.$searchForm?.addEventListener("focusout", () => {
+    this.$searchForm.addEventListener("focusout", () => {
       const searchInput = this.$searchForm
         .firstElementChild as HTMLInputElement;
       if (searchInput.value.trim() === "") {
@@ -404,7 +430,7 @@ export default class NavBar {
         searchInput.setCustomValidity("");
       }
     });
-    this.$searchForm?.addEventListener("submit", (event) => {
+    this.$searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
       const formData = new FormData(event.target as HTMLFormElement);
