@@ -266,23 +266,26 @@ export default class NavBar {
   renderStatusForFilter() {
     return `
     <div id="js-statusFilterContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
-        ${this.status
-          .map(
-            (status) => `
-          <span class="${
-            status === this.selectedStatus
-              ? "relative bg-slate-600 rounded-lg text-white"
-              : ""
-          } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
+    ${this.status
+      .map(
+        (status, index) => `
+        <span class="${
+          status === this.selectedStatus
+            ? "relative bg-slate-600 rounded-lg text-white"
+            : ""
+        } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer ${
+          index === this.status.length - 1 ? "col-span-2" : ""
+        }">
+          ${
             status === this.selectedStatus
               ? `
-            <div>${this.selectedStatus}</div>`
+              <div>${this.selectedStatus}</div>`
               : status
           }
-          </span>
-        `
-          )
-          .join("")}
+        </span>
+      `
+      )
+      .join("")}    
       </div>
     `;
   }
