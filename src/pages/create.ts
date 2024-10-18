@@ -22,7 +22,7 @@ kanbanForm.addEventListener("submit", (event: SubmitEvent) => {
 
   arrayCards.push({
     id: idCard,
-    status: "to do",
+    status: "Para Fazer",
     tag: target?.elements["tag"].value,
     name: target?.elements["name"].value,
     description: target?.elements["description"].value,

@@ -1,5 +1,5 @@
-type Status = "to do" | "in progress" | "completed";
-type Tag = "frontend" | "backend" | "ux";
+type Status = "Para Fazer" | "Em Andamento" | "Concluido";
+type Tag = "Front-End" | "Back-End" | "Data" | "UX / UI";
 
 export default interface CardEntity {
   id: number;
