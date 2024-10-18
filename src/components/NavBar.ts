@@ -1,23 +1,31 @@
 import { filterTasks } from "../utils/filterTasts";
 import getUsersAPI from "../utils/getUsers";
-import { IPokemon } from "../utils/model";
-import { TagManager, FilterTaskUserManager } from "../utils/tagsUsers";
+import { IPokemon } from "../models/IPokemon";
+import {
+  TagManager,
+  FilterTaskUserManager,
+  StatusManager,
+} from "../utils/tagsAndUsers";
 export default class NavBar {
   selectedTag: string = "";
   selectedFilterUser: string = "";
+  selectedStatus: string = "";
   selectedTaskUser: string = "";
   $header: HTMLElement;
   $textDivFilter: HTMLParagraphElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
+  $tagsFilterMenu: HTMLDivElement;
+  $tagsFilterContainer: HTMLDivElement;
   $usersFilterMenu: HTMLDivElement;
   $usersFilterMenuContainer: HTMLDivElement;
+  $statusFilterMenu: HTMLDivElement;
+  $statusFilterContainer: HTMLDivElement;
   $selectedUserTaskContainer: HTMLDivElement;
   $usersTaskMenu: HTMLDivElement;
   $searchForm: HTMLFormElement;
-  $tagsMenu: HTMLDivElement;
-  $tagsContainer: HTMLDivElement;
   tags: string[];
+  status: string[];
   pokemons: IPokemon[] = [];
 
   constructor() {
@@ -28,21 +36,29 @@ export default class NavBar {
     this.$filterMenu = document.querySelector(
       "#js-filterMenu"
     ) as HTMLDivElement;
+    this.$tagsFilterMenu = document.querySelector(
+      "#js-tagsFilterMenu"
+    ) as HTMLDivElement;
     this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
-    ) as HTMLDivElement;
-    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
-    this.$tagsContainer = document.querySelector(
-      "#js-tagsContainer"
     ) as HTMLDivElement;
     this.$usersFilterMenu = document.querySelector(
       "#js-usersFilterMenu"
     ) as HTMLDivElement;
-    this.$usersFilterMenuContainer = document.querySelector(
-      "#js-usersFilterMenuContainer"
+    this.$tagsFilterContainer = document.querySelector(
+      "#js-tagsFilterContainer"
     ) as HTMLDivElement;
     this.$usersTaskMenu = document.querySelector(
       "#js-usersTaskMenu"
+    ) as HTMLDivElement;
+    this.$usersFilterMenuContainer = document.querySelector(
+      "#js-usersFilterMenuContainer"
+    ) as HTMLDivElement;
+    this.$statusFilterMenu = document.querySelector(
+      "#js-statusFilterMenu"
+    ) as HTMLDivElement;
+    this.$statusFilterContainer = document.querySelector(
+      "#js-statusFilterContainer"
     ) as HTMLDivElement;
     this.$selectedUserTaskContainer = document.querySelector(
       "#js-selectedUserTaskContainer"
@@ -52,6 +68,7 @@ export default class NavBar {
     ) as HTMLFormElement;
 
     this.tags = ["Front-End", "Back-End", "UX / UI", "Data"];
+    this.status = ["Para Fazer", "Em Andamento", "Concluidas"];
     // this.loadSelectedValues();
     this.init();
   }
@@ -59,6 +76,8 @@ export default class NavBar {
   loadSelectedValues() {
     const tagManager = new TagManager();
     this.selectedTag = tagManager.getSelectedTag();
+    const statusManager = new StatusManager();
+    this.selectedStatus = statusManager.getSelectedStatus();
 
     const userManager = new FilterTaskUserManager();
     this.selectedFilterUser = userManager.getFilterSelectedUser();
@@ -75,6 +94,7 @@ export default class NavBar {
     this.addEventListeners();
     console.log(filterTasks());
   }
+
   async loadPokemons(): Promise<void> {
     this.pokemons = await getUsersAPI(this.pokemons);
   }
@@ -101,9 +121,11 @@ export default class NavBar {
     this.$filterMenuContainer = document.querySelector(
       "#js-filterMenuContainer"
     ) as HTMLDivElement;
-    this.$tagsMenu = document.querySelector("#js-tagsMenu") as HTMLDivElement;
-    this.$tagsContainer = document.querySelector(
-      "#js-tagsContainer"
+    this.$tagsFilterMenu = document.querySelector(
+      "#js-tagsFilterMenu"
+    ) as HTMLDivElement;
+    this.$tagsFilterContainer = document.querySelector(
+      "#js-tagsFilterContainer"
     ) as HTMLDivElement;
     this.$usersFilterMenu = document.querySelector(
       "#js-usersFilterMenu"
@@ -116,6 +138,12 @@ export default class NavBar {
     ) as HTMLDivElement;
     this.$selectedUserTaskContainer = document.querySelector(
       "#js-selectedUserTaskContainer"
+    ) as HTMLDivElement;
+    this.$statusFilterMenu = document.querySelector(
+      "#js-statusFilterMenu"
+    ) as HTMLDivElement;
+    this.$statusFilterContainer = document.querySelector(
+      "#js-statusFilterContainer"
     ) as HTMLDivElement;
     this.$searchForm = document.querySelector(
       "#js-searchForm"
@@ -142,7 +170,7 @@ export default class NavBar {
         <div id="js-filterMenu" class="relative flex flex-col items-center justify-center w-24 h-full cursor-pointer hover:bg-gray-200 hover:border-4 hover:border-b-indigo-400">
           <p id="js-textDivFilter" class="font-thin text-lg"></p>
           <div id="js-filterMenuContainer" class="absolute m-1 top-full shadow-xl hidden items-left justify-center flex-col w-36 h-40">
-            <div id="js-tagsMenu" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
+            <div id="js-tagsFilterMenu" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
               <p class="font-light text-lg">Tags</p> 
               <p class="absolute text-lg left-3/4 translate-x-2">></p>
               ${this.renderTagsForFilter()}
@@ -152,6 +180,11 @@ export default class NavBar {
               <p class="absolute text-lg left-3/4 translate-x-2">></p>
               ${usersFilterHTML}
             </div>
+            <div id="js-statusFilterMenu" class="rounded-bl-md flex items-center justify-center bg-gray-200 hover:bg-gray-300 h-full">
+              <p class="font-light text-lg">Status</p>
+              <p class="absolute text-lg left-3/4 translate-x-2">></p>
+              ${this.renderStatusForFilter()}
+            </div>
           </div>
         </div>
       </div>
@@ -160,7 +193,7 @@ export default class NavBar {
 
   renderTagsForFilter() {
     return `
-      <div id="js-tagsContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
+      <div id="js-tagsFilterContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
         ${this.tags
           .map(
             (tag) => `
@@ -230,6 +263,29 @@ export default class NavBar {
         ${selectedUserText}
       </div>`;
   }
+  renderStatusForFilter() {
+    return `
+    <div id="js-statusFilterContainer" class="shadow-xl cursor-default absolute top-0 bg-gray-300 rounded-br-md left-full h-full w-80 hidden grid-rows-2 grid-cols-2 items-center justify-items-center justify-center">
+        ${this.status
+          .map(
+            (status) => `
+          <span class="${
+            status === this.selectedStatus
+              ? "relative bg-slate-600 rounded-lg text-white"
+              : ""
+          } w-32 flex items-center justify-center h-12 border-2 border-solid border-gray-300 rounded-lg cursor-pointer">${
+            status === this.selectedStatus
+              ? `
+            <div>${this.selectedStatus}</div>`
+              : status
+          }
+          </span>
+        `
+          )
+          .join("")}
+      </div>
+    `;
+  }
 
   // FALTA USAR O VALUE PARA FILTRAR AS TASKS
   renderSearchBar() {
@@ -295,15 +351,15 @@ export default class NavBar {
         );
       }
     });
-    this.$tagsMenu.addEventListener("mouseenter", () => {
-      this.$tagsContainer.classList.remove("hidden");
-      this.$tagsContainer.classList.add("grid");
+    this.$tagsFilterMenu.addEventListener("mouseenter", () => {
+      this.$tagsFilterContainer.classList.remove("hidden");
+      this.$tagsFilterContainer.classList.add("grid");
     });
-    this.$tagsMenu.addEventListener("mouseleave", () => {
-      this.$tagsContainer.classList.remove("grid");
-      this.$tagsContainer.classList.add("hidden");
+    this.$tagsFilterMenu.addEventListener("mouseleave", () => {
+      this.$tagsFilterContainer.classList.remove("grid");
+      this.$tagsFilterContainer.classList.add("hidden");
     });
-    this.$tagsContainer.addEventListener("click", (event) => {
+    this.$tagsFilterContainer.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
       const spanElement = target.closest("span") as HTMLSpanElement;
       if (spanElement) {
@@ -321,9 +377,6 @@ export default class NavBar {
       this.$usersFilterMenuContainer.classList.remove("grid");
       this.$usersFilterMenuContainer.classList.add("hidden");
     });
-
-    // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     this.$usersFilterMenuContainer.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
       const spanElement = target.closest("img");
@@ -334,6 +387,25 @@ export default class NavBar {
         this.init();
       }
     });
+    this.$statusFilterMenu.addEventListener("mouseenter", () => {
+      this.$statusFilterContainer.classList.remove("hidden");
+      this.$statusFilterContainer.classList.add("grid");
+      this.$statusFilterContainer.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        const spanElement = target.closest("span") as HTMLSpanElement;
+        if (spanElement) {
+          const selectedStatus = String(spanElement.textContent?.trim());
+          const statusManager = new StatusManager();
+          statusManager.setStatus(selectedStatus);
+          this.init();
+        }
+      });
+    });
+    this.$statusFilterMenu.addEventListener("mouseleave", () => {
+      this.$statusFilterContainer.classList.remove("grid");
+      this.$statusFilterContainer.classList.add("hidden");
+    });
+
     this.$selectedUserTaskContainer.addEventListener("mouseenter", () => {
       this.$usersTaskMenu.classList.remove("hidden");
       this.$usersTaskMenu.classList.add("flex");
@@ -394,10 +466,10 @@ export default class NavBar {
         searchInput.setCustomValidity(
           "Por favor, digite o nome da sua Tarefa!"
         );
+      } else {
+        console.log(filterTasks(searchValue));
       }
-
       this.$searchForm.reset();
-      // console.log(searchValue);
     });
   }
 }

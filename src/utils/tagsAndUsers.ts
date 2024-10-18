@@ -51,7 +51,6 @@ export class FilterTaskUserManager {
   setTaskSelectedUser(selectedTaskUser: string) {
     const actualTaskUser = localStorage.getItem("selectedTaskUser");
     const parsedTaskUser = actualTaskUser ? JSON.parse(actualTaskUser) : null;
-    console.log(parsedTaskUser);
     if (parsedTaskUser === selectedTaskUser) {
       localStorage.removeItem("selectedTaskUser");
     } else {
@@ -59,6 +58,23 @@ export class FilterTaskUserManager {
         "selectedTaskUser",
         JSON.stringify(selectedTaskUser)
       );
+    }
+  }
+}
+export class StatusManager {
+  getSelectedStatus() {
+    const selectedStatus = localStorage.getItem("selectedStatus");
+    if (!selectedStatus) {
+      return "";
+    }
+    return JSON.parse(selectedStatus);
+  }
+
+  setStatus(selectedStatus: string) {
+    if (selectedStatus === this.getSelectedStatus()) {
+      localStorage.removeItem("selectedStatus");
+    } else {
+      localStorage.setItem("selectedStatus", JSON.stringify(selectedStatus));
     }
   }
 }

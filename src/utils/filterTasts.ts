@@ -1,5 +1,5 @@
-import { TagManager, FilterTaskUserManager } from "./tagsUsers";
-type Status = "to do" | "in progress" | "completed";
+import { TagManager, FilterTaskUserManager } from "./tagsAndUsers";
+type Status = "Para Fazer" | "Em Andamento" | "Concluido";
 type Tag = "Front-End" | "Back-End" | "UX / UI" | "Data";
 
 interface CardEntity {
@@ -15,60 +15,60 @@ let tasksTeste: CardEntity[] = [];
 tasksTeste.push(
   {
     id: 0,
-    status: "to do",
+    status: "Para Fazer",
     tag: "Front-End",
-    description: "description 0",
+    description: "fazer o filtro de pesquisa",
     createdBy: "pikachu",
     createdAt: String(new Date()),
   },
   {
     id: 1,
-    status: "in progress",
+    status: "Em Andamento",
     tag: "Back-End",
-    description: "description 1",
+    description: "almoçar",
     createdBy: "charizard",
     createdAt: String(new Date()),
   },
   {
     id: 2,
-    status: "in progress",
+    status: "Em Andamento",
     tag: "UX / UI",
-    description: "description 2",
+    description: "jantar",
     createdBy: "pikachu",
     createdAt: String(new Date()),
   },
   {
     id: 3,
-    status: "completed",
+    status: "Concluido",
     tag: "Data",
-    description: "description 3",
+    description: "tomar café",
     createdBy: "blastoise",
     createdAt: String(new Date()),
   },
   {
     id: 4,
-    status: "completed",
+    status: "Concluido",
     tag: "Data",
-    description: "description 4",
+    description: "comprar uma rtx 4090",
     createdBy: "bulbasaur",
     createdAt: String(new Date()),
   }
 );
 
-export function filterTasks(): CardEntity[] {
+export function filterTasks(searchValue?: string): CardEntity[] {
   let orderedTasks: CardEntity[] = [...tasksTeste];
 
-  const tagStorage = localStorage.getItem("selectedTag");
-  const userStorage = localStorage.getItem("selectedFilterUser");
+  const tagStorage = new TagManager();
+  const userStorage = new FilterTaskUserManager();
   const statusStorage = localStorage.getItem("selectedStatus");
 
-  if (tagStorage) {
-    const tag = JSON.parse(tagStorage);
+  if (tagStorage.getSelectedTag()) {
+    const tag = tagStorage.getSelectedTag();
     orderedTasks = orderedTasks.filter((task) => task.tag === tag);
   }
 
-  if (userStorage) {
-    const userId = Number(JSON.parse(userStorage));
+  if (userStorage.getFilterSelectedUser()) {
+    const userId = Number(userStorage.getFilterSelectedUser());
     let user: string = "";
     switch (userId) {
       case 0:
@@ -92,11 +92,29 @@ export function filterTasks(): CardEntity[] {
     orderedTasks = orderedTasks.filter((task) => task.status === status);
   }
 
+  if (searchValue) {
+    orderedTasks = orderedTasks.sort((a, b) => {
+      const taskA = a.description.toLowerCase();
+      const taskB = b.description.toLowerCase();
+      const search = searchValue.toLowerCase();
+
+      const aContains = taskA.includes(search);
+      const bContains = taskB.includes(search);
+
+      // se tem na A e não na B => A primeiro
+      if (aContains && !bContains) return -1;
+      // se tem na B e não na A => B vem primeiro
+      if (!aContains && bContains) return 1;
+
+      // se não achar => faz nada
+      return 0;
+    });
+  }
   return orderedTasks;
 }
 
 // pro futudo:
-export function dateOrder(sortBy: number) {
+export function sortByDate(sortBy: number) {
   let orderedTasks: CardEntity[] = tasksTeste;
   switch (sortBy) {
     case 0:

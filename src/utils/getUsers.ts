@@ -1,4 +1,4 @@
-import { IPokemon } from "./model";
+import { IPokemon } from "../models/IPokemon";
 
 export default async function getUsersAPI(pokemonsArray: IPokemon[]) {
   try {
