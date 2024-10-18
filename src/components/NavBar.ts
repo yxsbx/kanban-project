@@ -1,67 +1,62 @@
-class TagManager {
-  getSelectedTag() {
-    const selectedTag = localStorage.getItem("selectedTag");
-    if (!selectedTag) {
-      return "";
-    }
-    return JSON.parse(selectedTag);
-  }
+import { filterTasks } from "../utils/filterTasts";
+import { TagManager, FilterTaskUserManager } from "../utils/tagsUsers";
+interface IPokemon {
+  id: number;
+  name: string;
+  imgURL: string;
+}
+let pokemons: IPokemon[] = [];
+async function getUsersAPI() {
+  try {
+    const [
+      pikachuResponse,
+      charmanderResponse,
+      blastoiseResponse,
+      bulbasaurResponse,
+    ] = await Promise.all([
+      fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`),
+      fetch(`https://pokeapi.co/api/v2/pokemon/charizard`),
+      fetch(`https://pokeapi.co/api/v2/pokemon/blastoise`),
+      fetch(`https://pokeapi.co/api/v2/pokemon/bulbasaur`),
+    ]);
+    const [pikachuData, charmanderData, blastoiseData, bulbasaurData] =
+      await Promise.all([
+        pikachuResponse.json(),
+        charmanderResponse.json(),
+        blastoiseResponse.json(),
+        bulbasaurResponse.json(),
+      ]);
 
-  setTag(selectedTag: string) {
-    if (selectedTag === this.getSelectedTag()) {
-      localStorage.removeItem("selectedTag");
-    } else {
-      localStorage.setItem("selectedTag", JSON.stringify(selectedTag));
-    }
+    pokemons = [
+      {
+        id: 0,
+        name: pikachuData.name,
+        imgURL: pikachuData.sprites.other.dream_world.front_default,
+      },
+      {
+        id: 1,
+        name: charmanderData.name,
+        imgURL: charmanderData.sprites.other.dream_world.front_default,
+      },
+      {
+        id: 2,
+        name: blastoiseData.name,
+        imgURL: blastoiseData.sprites.other.dream_world.front_default,
+      },
+      {
+        id: 3,
+        name: bulbasaurData.name,
+        imgURL: bulbasaurData.sprites.other.dream_world.front_default,
+      },
+    ];
+    console.log(pokemons);
+    return pokemons;
+  } catch (error) {
+    console.error("Opa, pokemom errado", error);
   }
 }
-class FilterTaskUserManager {
-  getFilterSelectedUser() {
-    const selectedFilterUser = localStorage.getItem("selectedFilterUser");
-    if (!selectedFilterUser) {
-      return "";
-    }
-    return JSON.parse(selectedFilterUser);
-  }
+await getUsersAPI();
 
-  setFilterSelectedUser(selectedFilterUser: string) {
-    const actualFilterUser = localStorage.getItem("selectedFilterUser");
-    const parsedFilterUser = actualFilterUser
-      ? JSON.parse(actualFilterUser)
-      : null;
-
-    if (parsedFilterUser === selectedFilterUser) {
-      localStorage.removeItem("selectedFilterUser");
-    } else {
-      localStorage.setItem(
-        "selectedFilterUser",
-        JSON.stringify(selectedFilterUser)
-      );
-    }
-  }
-
-  getTaskSelectedUser() {
-    const selectedTaskUser = localStorage.getItem("selectedTaskUser");
-    if (!selectedTaskUser) {
-      return "https://www.shutterstock.com/image-vector/anonymous-icon-260nw-436441336.jpg";
-    }
-    return JSON.parse(selectedTaskUser);
-  }
-
-  setTaskSelectedUser(selectedTaskUser: string) {
-    const actualTaskUser = localStorage.getItem("selectedTaskUser");
-    const parsedTaskUser = actualTaskUser ? JSON.parse(actualTaskUser) : null;
-
-    if (parsedTaskUser === selectedTaskUser) {
-      localStorage.removeItem("selectedTaskUser");
-    } else {
-      localStorage.setItem(
-        "selectedTaskUser",
-        JSON.stringify(selectedTaskUser)
-      );
-    }
-  }
-}
 export default class NavBar {
   selectedTag: string = "";
   selectedFilterUser: string = "";
@@ -111,7 +106,7 @@ export default class NavBar {
     ) as HTMLFormElement;
 
     this.tags = ["Front-End", "Back-End", "UX / UI", "Data"];
-    this.loadSelectedValues();
+    // this.loadSelectedValues();
     this.init();
   }
 
@@ -131,6 +126,7 @@ export default class NavBar {
     }
     this.updateDOMReferences();
     this.addEventListeners();
+    console.log(filterTasks());
   }
 
   updateDOMReferences() {
@@ -236,25 +232,7 @@ export default class NavBar {
     `;
   }
 
-  async getUsersAPI(pokemonName: string) {
-    try {
-      const response: Response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
-      );
-      const pokemonData: any = await response.json();
-      const pokemonImgURL: string =
-        pokemonData.sprites.other.dream_world.front_default;
-      return pokemonImgURL;
-    } catch (error) {
-      console.error("Opa, pokemom errado", error);
-    }
-  }
-
   async renderUsersForFilter() {
-    const img_pikachu = await this.getUsersAPI("pikachu");
-    const img_charmander = await this.getUsersAPI("charizard");
-    const img_blastoise = await this.getUsersAPI("blastoise");
-    const img_bulbasaur = await this.getUsersAPI("bulbasaur");
     let selectedUserText: string;
     let display: string;
     if (!this.selectedFilterUser) {
@@ -268,27 +246,39 @@ export default class NavBar {
         <p class="absolute bottom-2 row-start-2 row-span-1 col-start-1 col-span-1">Filtro Atual</p>
       `;
     }
+    let row = 1;
+    let col = 2;
 
     return `
       <div id="js-usersFilterMenuContainer" class="cursor-default bg-gray-300 shadow-xl w-80 h-full top-0 rounded-bl-md absolute left-full hidden grid-rows-2 grid-cols-3 items-center justify-items-center justify-center"> 
         <div id="js-selectedFilterUser" class="${display} drop-shadow-lg cursor-pointer w-16 h-16 row-start-1 row-span-2 col-start-1 col-span-1">
-            <img class="" src="${this.selectedFilterUser}" alt="" />
+            <img data-id="${pokemons[Number(this.selectedFilterUser)].id}" class="" src="${pokemons[Number(this.selectedFilterUser)].imgURL}" alt="" />
         </div>
-        <div class="drop-shadow-lg cursor-pointer w-12 row-start-1 row-span-1 col-start-2 col-span-1">
-          <img src="${img_pikachu}" alt="" />
-        </div>
-        <div class="drop-shadow-lg cursor-pointer w-12 row-start-2 row-span-1 col-start-2 col-span-1">
-          <img src="${img_bulbasaur}" alt="" />
-        </div>
+        ${pokemons
+          .map((pokemon, index) => {
+            if (index === 0) {
+              row = 1;
+              col = 2;
+            } else if (index === 1) {
+              row = 1;
+              col = 3;
+            } else if (index === 2) {
+              row = 2;
+              col = 2;
+            } else if (index === 3) {
+              row = 2;
+              col = 3;
+            }
+
+            return `
+              <div class="drop-shadow-lg cursor-pointer w-12 row-start-${row} row-span-1 col-start-${col} col-span-1">
+                <img data-id="${pokemon.id}" src="${pokemon.imgURL}" alt="" />
+              </div>
+            `;
+          })
+          .join("")}
         ${selectedUserText}
-        <div class="drop-shadow-lg cursor-pointer w-12 row-start-1 row-span-1 col-start-3 col-span-1">
-          <img src="${img_charmander}" alt="" />
-        </div>
-        <div class="drop-shadow-lg cursor-pointer w-12 row-start-2 row-span-1 col-start-3 col-span-1">
-          <img src="${img_blastoise}" alt="" />
-        </div>
-      </div>
-    `;
+      </div>`;
   }
 
   // FALTA USAR O VALUE PARA FILTRAR AS TASKS
@@ -301,23 +291,29 @@ export default class NavBar {
   }
 
   async renderUsersForTasks() {
-    const img_pikachu = await this.getUsersAPI("pikachu");
-    const img_charmander = await this.getUsersAPI("charizard");
-    const img_blastoise = await this.getUsersAPI("blastoise");
-    const img_bulbasaur = await this.getUsersAPI("bulbasaur");
-
+    const dataId: number = 0;
+    let img: string = "";
+    if (!localStorage.getItem("selectedTaskUser")) {
+      img =
+        "https://www.shutterstock.com/image-vector/anonymous-icon-260nw-436441336.jpg";
+    } else {
+      img = pokemons[Number(this.selectedTaskUser)].imgURL;
+    }
     return `
       <div class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
         <div id="js-selectedUserTaskContainer" class="w-14 h-14 bg-neutral-300 rounded-full overflow-hidden flex items-center justify-center">
           <div class="flex items-center justify-center w-full h-full rounded-full overflow-hidden cursor-pointer">
-            <img class="" src="${this.selectedTaskUser}" alt="" />
+            <img data-id="${dataId}" class="" src="${img}" alt="" />
           </div>
         </div>
         <div id="js-usersTaskMenu" class="absolute top-full rounded-b-md shadow-xl hidden flex-col items-center justify-center bg-gray-200 w-20 shadow-lg">
-          <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_pikachu}" alt="" />
-          <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_bulbasaur}" alt="" />
-          <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_charmander}" alt="" />
-          <img class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${img_blastoise}" alt="" />
+          ${pokemons
+            .map(
+              (pokemon) => `
+            <img data-id="${pokemon.id}" class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${pokemon.imgURL}" alt="" />            
+          `
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -375,11 +371,14 @@ export default class NavBar {
       this.$usersFilterMenuContainer.classList.remove("grid");
       this.$usersFilterMenuContainer.classList.add("hidden");
     });
+
+    // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     this.$usersFilterMenuContainer.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
       const spanElement = target.closest("img");
       if (spanElement) {
-        const selectedFilterUser = String(spanElement.src);
+        const selectedFilterUser = String(spanElement.dataset.id);
         const filterTaskUserManager = new FilterTaskUserManager();
         filterTaskUserManager.setFilterSelectedUser(selectedFilterUser);
         this.init();
@@ -390,13 +389,16 @@ export default class NavBar {
       this.$usersTaskMenu.classList.add("flex");
       this.$usersTaskMenu.addEventListener("click", (event) => {
         if (event.target instanceof HTMLImageElement) {
-          const imgSrc = event.target.src;
+          const selectedTaskUser = String(event.target.dataset.id);
           const saveUser = new FilterTaskUserManager();
-          saveUser.setTaskSelectedUser(imgSrc);
+          saveUser.setTaskSelectedUser(selectedTaskUser);
 
           this.init();
         }
       });
+      // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+      // IMPORTANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
       const container = this.$selectedUserTaskContainer
         .parentElement as HTMLDivElement;
       container.addEventListener("mouseleave", () => {
