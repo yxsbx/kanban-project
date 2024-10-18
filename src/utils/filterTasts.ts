@@ -12,7 +12,6 @@ interface CardEntity {
 }
 
 let tasksTeste: CardEntity[] = [];
-
 tasksTeste.push(
   {
     id: 0,

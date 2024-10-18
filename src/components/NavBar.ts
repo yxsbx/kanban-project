@@ -1,62 +1,7 @@
 import { filterTasks } from "../utils/filterTasts";
+import getUsersAPI from "../utils/getUsers";
+import { IPokemon } from "../utils/model";
 import { TagManager, FilterTaskUserManager } from "../utils/tagsUsers";
-interface IPokemon {
-  id: number;
-  name: string;
-  imgURL: string;
-}
-let pokemons: IPokemon[] = [];
-async function getUsersAPI() {
-  try {
-    const [
-      pikachuResponse,
-      charmanderResponse,
-      blastoiseResponse,
-      bulbasaurResponse,
-    ] = await Promise.all([
-      fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`),
-      fetch(`https://pokeapi.co/api/v2/pokemon/charizard`),
-      fetch(`https://pokeapi.co/api/v2/pokemon/blastoise`),
-      fetch(`https://pokeapi.co/api/v2/pokemon/bulbasaur`),
-    ]);
-    const [pikachuData, charmanderData, blastoiseData, bulbasaurData] =
-      await Promise.all([
-        pikachuResponse.json(),
-        charmanderResponse.json(),
-        blastoiseResponse.json(),
-        bulbasaurResponse.json(),
-      ]);
-
-    pokemons = [
-      {
-        id: 0,
-        name: pikachuData.name,
-        imgURL: pikachuData.sprites.other.dream_world.front_default,
-      },
-      {
-        id: 1,
-        name: charmanderData.name,
-        imgURL: charmanderData.sprites.other.dream_world.front_default,
-      },
-      {
-        id: 2,
-        name: blastoiseData.name,
-        imgURL: blastoiseData.sprites.other.dream_world.front_default,
-      },
-      {
-        id: 3,
-        name: bulbasaurData.name,
-        imgURL: bulbasaurData.sprites.other.dream_world.front_default,
-      },
-    ];
-    console.log(pokemons);
-    return pokemons;
-  } catch (error) {
-    console.error("Opa, pokemom errado", error);
-  }
-}
-await getUsersAPI();
-
 export default class NavBar {
   selectedTag: string = "";
   selectedFilterUser: string = "";
@@ -73,6 +18,7 @@ export default class NavBar {
   $tagsMenu: HTMLDivElement;
   $tagsContainer: HTMLDivElement;
   tags: string[];
+  pokemons: IPokemon[] = [];
 
   constructor() {
     this.$header = document.querySelector("#js-header") as HTMLElement;
@@ -120,6 +66,7 @@ export default class NavBar {
   }
 
   async init(): Promise<void> {
+    await this.loadPokemons();
     this.loadSelectedValues();
     if (this.$header) {
       this.$header.innerHTML = await this.renderNavBar();
@@ -127,6 +74,9 @@ export default class NavBar {
     this.updateDOMReferences();
     this.addEventListeners();
     console.log(filterTasks());
+  }
+  async loadPokemons(): Promise<void> {
+    this.pokemons = await getUsersAPI(this.pokemons);
   }
 
   updateDOMReferences() {
@@ -252,9 +202,9 @@ export default class NavBar {
     return `
       <div id="js-usersFilterMenuContainer" class="cursor-default bg-gray-300 shadow-xl w-80 h-full top-0 rounded-bl-md absolute left-full hidden grid-rows-2 grid-cols-3 items-center justify-items-center justify-center"> 
         <div id="js-selectedFilterUser" class="${display} drop-shadow-lg cursor-pointer w-16 h-16 row-start-1 row-span-2 col-start-1 col-span-1">
-            <img data-id="${pokemons[Number(this.selectedFilterUser)].id}" class="" src="${pokemons[Number(this.selectedFilterUser)].imgURL}" alt="" />
+            <img data-id="${this.pokemons[Number(this.selectedFilterUser)].id}" class="" src="${this.pokemons[Number(this.selectedFilterUser)].imgURL}" alt="" />
         </div>
-        ${pokemons
+        ${this.pokemons
           .map((pokemon, index) => {
             if (index === 0) {
               row = 1;
@@ -297,7 +247,7 @@ export default class NavBar {
       img =
         "https://www.shutterstock.com/image-vector/anonymous-icon-260nw-436441336.jpg";
     } else {
-      img = pokemons[Number(this.selectedTaskUser)].imgURL;
+      img = this.pokemons[Number(this.selectedTaskUser)].imgURL;
     }
     return `
       <div class="flex-1 h-16 relative gap-1 flex flex-col items-center justify-center bg-transparent">
@@ -307,7 +257,7 @@ export default class NavBar {
           </div>
         </div>
         <div id="js-usersTaskMenu" class="absolute top-full rounded-b-md shadow-xl hidden flex-col items-center justify-center bg-gray-200 w-20 shadow-lg">
-          ${pokemons
+          ${this.pokemons
             .map(
               (pokemon) => `
             <img data-id="${pokemon.id}" class="hover:bg-gray-300 p-2 drop-shadow-lg cursor-pointer" src="${pokemon.imgURL}" alt="" />            
