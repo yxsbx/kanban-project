@@ -24,6 +24,7 @@ kanbanForm.addEventListener("submit", (event: SubmitEvent) => {
     id: idCard,
     status: "to do",
     tag: target?.elements["tag"].value,
+    name: target?.elements["name"].value,
     description: target?.elements["description"].value,
     createdAt: currentDate,
   });
