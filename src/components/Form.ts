@@ -1,13 +1,13 @@
 export default class FormComponent {
-    constructor() {
-        const form = document.querySelector("#form-burger-container");
+  constructor() {
+    const form = document.querySelector("#form-burger-container");
 
-        if(form) form.innerHTML = this.render();
-    }
+    if (form) form.innerHTML = this.render();
+  }
 
-    render() {
-        return `
-            <form id="formCard"><div class="add">
+  render() {
+    return `
+            <form id="formCard" method="post"><div class="add">
                     <select name="tag" id="tag">
                         <option value="frontend" selected>Frontend</option>
                         <option value="backend">Backend</option>
@@ -18,5 +18,5 @@ export default class FormComponent {
                 </div>
             </form>
         `;
-    }
+  }
 }

@@ -4,26 +4,31 @@ import { generateId } from "../utils/generateID";
 import { formatCurrentDate } from "../utils/formatDate";
 
 const form = new FormComponent();
-const kanbanForm: HTMLFormElement | null = (document.querySelector("formCard") as HTMLFormElement);
+const kanbanForm: HTMLFormElement = document.querySelector(
+  "#formCard"
+) as HTMLFormElement;
 
-kanbanForm?.addEventListener(("submit"), (event: SubmitEvent) => {
-    event.preventDefault();
+kanbanForm.addEventListener("submit", (event: SubmitEvent) => {
+  event.preventDefault();
 
-    const target = (event.target as any); //Need to be changed
+  const target = event.target as any; //Need to be changed
 
-    const arrayCards: Array<CardEntity> = JSON.parse(localStorage.getItem("arrayCards") ?? "[]");
-    const idCard = Number(generateId());
-    const currentDate = formatCurrentDate();
+  const arrayCards: Array<CardEntity> = JSON.parse(
+    localStorage.getItem("arrayCards") ?? "[]"
+  );
+  const idCard = Date.now();
+  console.log(idCard);
+  const currentDate = formatCurrentDate();
 
-    arrayCards.push({
-        id: idCard,
-        status: "to do",
-        tag: target?.elements["tag"].value,
-        description: target?.elements["description"].value,
-        createdAt: currentDate
-    });
+  arrayCards.push({
+    id: idCard,
+    status: "to do",
+    tag: target?.elements["tag"].value,
+    description: target?.elements["description"].value,
+    createdAt: currentDate,
+  });
 
-    localStorage.setItem("arrayCards", JSON.stringify(arrayCards));
+  localStorage.setItem("arrayCards", JSON.stringify(arrayCards));
 
-    kanbanForm.reset();
+  kanbanForm.reset();
 });
