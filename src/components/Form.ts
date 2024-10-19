@@ -16,23 +16,19 @@ export default class FormComponent {
   }
   render() {
     const app = document.querySelector("#app") as HTMLDivElement;
-    const formString: string = `
+    const formString: string = /*HTML*/ `
 					<form id="formCard" method="post">
-							<div class="add flex border-2 justify-center items-center">
-									<select name="tag" id="tag" required class="border-2 flex justify-center items-center">
+							<div class="add w-fit px-5 py-5 rounded-xl flex flex-col gap-4 justify-center bg-zinc-300">
+									<select name="tag" id="tag" required class="p-2 rounded-md bg-white">
 											<option value="" disabled selected>Selecione uma Tag</option>
 											<option value="Front-End">Frontend</option>
 											<option value="Back-End">Backend</option>
 											<option value="Data">Data</option>
 											<option value="UX / UI">UX / UI</option>
 									</select>
-									<label for="name">Nome
-											<input type="text" name="name" id="name" required/>
-									</label>
-									<label for="description">Descrição
-											<input type="text" name="description" id="description">
-									</label>
-									<button type="submit">Adicionar</button>
+                  <input type="text" name="name" id="name" placeholder="Nome" required class="p-2 rounded-md"/>
+									<input type="text" name="description" id="description" placeholder="Descrição" class="p-2 rounded-md">
+									<button type="submit" class="py-2 rounded-md" style="background-color: #4f5966; color: white">Confirmar</button>
 							</div>
 					</form>
     `;
@@ -94,7 +90,7 @@ export default class FormComponent {
 
       localStorage.setItem("arrayCards", JSON.stringify(arrayCards));
 
-      this.$kanbanForm.reset();
+      this.$kanbanForm.remove();
     });
   }
 }
