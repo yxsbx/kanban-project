@@ -2,17 +2,19 @@ import CardEntity from "../models/cardEntity";
 import { formatCurrentDate } from "../utils/formatDate";
 
 export default class FormComponent {
-  kanbanForm: HTMLFormElement;
+  $kanbanFormContainer: HTMLDivElement;
+  $kanbanForm: HTMLFormElement;
   constructor() {
-    const app = document.querySelector("#app") as HTMLDivElement;
-    if (app) app.innerHTML += this.render();
+    this.$kanbanForm = document.querySelector("#formCard") as HTMLFormElement;
+    this.$kanbanFormContainer = document.createElement("div");
+    this.$kanbanFormContainer.id = "form-card-container";
+    this.$kanbanFormContainer.classList.add("container-fluid", "text-center");
 
-    this.kanbanForm = document.querySelector("#formCard") as HTMLFormElement;
     this.init();
   }
   render() {
-    return `
-			<div class="container-fluid  text-center" id="form-card-container"> 
+    const app = document.querySelector("#app") as HTMLDivElement;
+    const formString: string = `
 					<form id="formCard" method="post">
 							<div class="add flex border-2 justify-center items-center">
 									<select name="tag" id="tag" required class="border-2 flex justify-center items-center">
@@ -31,14 +33,20 @@ export default class FormComponent {
 									<button type="submit">Adicionar</button>
 							</div>
 					</form>
-			</div>
     `;
+    this.$kanbanFormContainer.innerHTML = formString;
+    if (app) app.append(this.$kanbanFormContainer);
   }
   async init() {
-    await this.addEventListener();
+    this.render();
+    await this.loadContent();
+    this.addEventListener();
   }
-  async addEventListener() {
-    this.kanbanForm.addEventListener("submit", (event: SubmitEvent) => {
+  async loadContent() {
+    this.$kanbanForm = document.querySelector("#formCard") as HTMLFormElement;
+  }
+  addEventListener() {
+    this.$kanbanForm.addEventListener("submit", (event: SubmitEvent) => {
       event.preventDefault();
 
       const target = event.target as any; //Need to be changed
@@ -62,7 +70,7 @@ export default class FormComponent {
 
       localStorage.setItem("arrayCards", JSON.stringify(arrayCards));
 
-      this.kanbanForm.reset();
+      this.$kanbanForm.reset();
     });
   }
 }
