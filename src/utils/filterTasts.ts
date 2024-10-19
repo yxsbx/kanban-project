@@ -6,57 +6,22 @@ interface CardEntity {
   id: number;
   status: Status;
   tag: Tag;
+  name: string;
   description: string;
   createdBy: string;
   createdAt: string;
 }
 
-let tasksTeste: CardEntity[] = [];
-tasksTeste.push(
-  {
-    id: 0,
-    status: "Para Fazer",
-    tag: "Front-End",
-    description: "fazer o filtro de pesquisa",
-    createdBy: "pikachu",
-    createdAt: String(new Date()),
-  },
-  {
-    id: 1,
-    status: "Em Andamento",
-    tag: "Back-End",
-    description: "almoçar",
-    createdBy: "charizard",
-    createdAt: String(new Date()),
-  },
-  {
-    id: 2,
-    status: "Em Andamento",
-    tag: "UX / UI",
-    description: "jantar",
-    createdBy: "pikachu",
-    createdAt: String(new Date()),
-  },
-  {
-    id: 3,
-    status: "Concluido",
-    tag: "Data",
-    description: "tomar café",
-    createdBy: "blastoise",
-    createdAt: String(new Date()),
-  },
-  {
-    id: 4,
-    status: "Concluido",
-    tag: "Data",
-    description: "comprar uma rtx 4090",
-    createdBy: "bulbasaur",
-    createdAt: String(new Date()),
-  }
-);
+let tasksArray = localStorage.getItem("arrayCards");
+let parsedTasksArray: CardEntity[] = [];
+if (tasksArray) {
+  parsedTasksArray = JSON.parse(tasksArray);
+} else {
+  parsedTasksArray = [];
+}
 
 export function filterTasks(searchValue?: string): CardEntity[] {
-  let orderedTasks: CardEntity[] = [...tasksTeste];
+  let orderedTasks: CardEntity[] = [...parsedTasksArray];
 
   const tagStorage = new TagManager();
   const userStorage = new FilterTaskUserManager();
@@ -94,8 +59,8 @@ export function filterTasks(searchValue?: string): CardEntity[] {
 
   if (searchValue) {
     orderedTasks = orderedTasks.sort((a, b) => {
-      const taskA = a.description.toLowerCase();
-      const taskB = b.description.toLowerCase();
+      const taskA = a.name.toLowerCase();
+      const taskB = b.name.toLowerCase();
       const search = searchValue.toLowerCase();
 
       const aContains = taskA.includes(search);
@@ -110,12 +75,13 @@ export function filterTasks(searchValue?: string): CardEntity[] {
       return 0;
     });
   }
+  console.log(orderedTasks);
   return orderedTasks;
 }
 
 // pro futudo:
 export function sortByDate(sortBy: number) {
-  let orderedTasks: CardEntity[] = tasksTeste;
+  let orderedTasks: CardEntity[] = parsedTasksArray;
   switch (sortBy) {
     case 0:
       // mais recentes primeiro

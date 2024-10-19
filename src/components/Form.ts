@@ -8,6 +8,8 @@ export default class FormComponent {
     this.$kanbanForm = document.querySelector("#formCard") as HTMLFormElement;
     this.$kanbanFormContainer = document.createElement("div");
     this.$kanbanFormContainer.id = "form-card-container";
+
+    //CLASSES DO FORMULARIO (id = formCard)
     this.$kanbanFormContainer.classList.add("container-fluid", "text-center");
 
     this.init();
@@ -55,8 +57,30 @@ export default class FormComponent {
         localStorage.getItem("arrayCards") ?? "[]"
       );
       const idCard = Date.now();
-      console.log(idCard);
       const currentDate = formatCurrentDate();
+
+      const createdById = localStorage.getItem("selectedTaskUser");
+      let userId: number;
+      let parsedCreatedBy: string = "";
+      if (createdById) {
+        userId = Number(JSON.parse(createdById));
+        switch (userId) {
+          case 0:
+            parsedCreatedBy = "pikachu";
+            break;
+          case 1:
+            parsedCreatedBy = "charizard";
+            break;
+          case 2:
+            parsedCreatedBy = "blastoise";
+            break;
+          case 3:
+            parsedCreatedBy = "bulbasaur";
+            break;
+        }
+      } else {
+        parsedCreatedBy = "Anônimo";
+      }
 
       arrayCards.push({
         id: idCard,
@@ -65,7 +89,7 @@ export default class FormComponent {
         name: target?.elements["name"].value,
         description: target?.elements["description"].value,
         createdAt: currentDate,
-        createdBy: "",
+        createdBy: parsedCreatedBy,
       });
 
       localStorage.setItem("arrayCards", JSON.stringify(arrayCards));

@@ -88,7 +88,10 @@ export default class NavBar {
     await this.loadPokemons();
     this.loadSelectedValues();
     if (this.$app) {
-      this.$app.innerHTML = await this.renderNavBar();
+      document.querySelector("#header")?.remove();
+      if (this.$app) {
+        this.$app.insertAdjacentHTML("afterbegin", await this.renderNavBar());
+      }
     }
     this.updateDOMReferences();
     this.addEventListeners();
@@ -446,7 +449,9 @@ export default class NavBar {
         } else {
           searchInput.setCustomValidity("");
           searchInput.placeholder = "Pesquise pelo nome da Tarefa.";
-          console.log(searchInput.value);
+
+          // TAREFAS SENDO FILTRADAS PELA BUSCA AQUI
+          console.log(filterTasks(searchInput.value));
         }
       });
     });
@@ -471,9 +476,10 @@ export default class NavBar {
         searchInput.setCustomValidity(
           "Por favor, digite o nome da sua Tarefa!"
         );
-      } else {
-        console.log(filterTasks(searchValue));
       }
+
+      // TAREFAS SENDO FILTRADAS PELA BUSCA AQUI CASO O USUÁRIO DÊ ENTER
+      console.log(filterTasks(searchInput.value));
       this.$searchForm.reset();
     });
   }
