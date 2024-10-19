@@ -7,6 +7,6 @@ export default interface CardEntity {
   tag: Tag;
   name: string;
   description: string;
-  //createdBy: string;
+  createdBy: string;
   createdAt: string;
 }

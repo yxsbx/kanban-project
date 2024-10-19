@@ -11,7 +11,7 @@ export default class NavBar {
   selectedFilterUser: string = "";
   selectedStatus: string = "";
   selectedTaskUser: string = "";
-  $header: HTMLElement;
+  $app: HTMLElement;
   $textDivFilter: HTMLParagraphElement;
   $filterMenu: HTMLDivElement;
   $filterMenuContainer: HTMLDivElement;
@@ -29,7 +29,7 @@ export default class NavBar {
   pokemons: IPokemon[] = [];
 
   constructor() {
-    this.$header = document.querySelector("#js-header") as HTMLElement;
+    this.$app = document.querySelector("#app") as HTMLElement;
     this.$textDivFilter = document.querySelector(
       "#js-textDivFilter"
     ) as HTMLParagraphElement;
@@ -87,8 +87,8 @@ export default class NavBar {
   async init(): Promise<void> {
     await this.loadPokemons();
     this.loadSelectedValues();
-    if (this.$header) {
-      this.$header.innerHTML = await this.renderNavBar();
+    if (this.$app) {
+      this.$app.innerHTML = await this.renderNavBar();
     }
     this.updateDOMReferences();
     this.addEventListeners();
@@ -152,14 +152,16 @@ export default class NavBar {
 
   async renderNavBar(): Promise<string> {
     return `
-      <nav class="pl-10 pr-10 flex flex-wrap justify-between items-center bg-gray-100 border-b-2">
-        <div class="flex items-center flex-1 justify-evenly">
-          <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
-          ${await this.renderFilters()}
-        </div>
-        ${this.renderSearchBar()}
-        ${await this.renderUsersForTasks()}
-      </nav>
+      <header id="header">
+        <nav class="pl-10 pr-10 flex flex-wrap justify-between items-center bg-gray-100 border-b-2">
+          <div class="flex items-center flex-1 justify-evenly">
+            <h1 class="font-medium text-lg cursor-default">Lista de Tarefas</h1>
+            ${await this.renderFilters()}
+          </div>
+          ${this.renderSearchBar()}
+          ${await this.renderUsersForTasks()}
+        </nav>
+      </header>
     `;
   }
 
