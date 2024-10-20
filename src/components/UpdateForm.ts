@@ -76,7 +76,7 @@ export default class UpdateForm {
 
     $updateForm?.addEventListener("submit", (event) => {
       event.preventDefault();
-      
+      const $modal = document.querySelector("#modal");
       const tagField = document.querySelector("#tag") as HTMLSelectElement;
       const nameField = document.querySelector("#name") as HTMLInputElement;
       const descriptionField = document.querySelector("#description") as HTMLInputElement;
@@ -85,21 +85,19 @@ export default class UpdateForm {
       const tasks: CardEntity[] = JSON.parse(localStorage.getItem("arrayCards") ?? "[]");
       const existingTask = tasks.find(task => +task.id === this.taskId);
 
-      if (existingTask) {
-        const updatedTask: CardEntity = {
-        ...existingTask,
-        tag: tagField.value as Tag,
-        name: nameField.value,
-        description: descriptionField.value,
-        };
+        if (existingTask) {
+          const updatedTask: CardEntity = {
+          ...existingTask,
+          tag: tagField.value as Tag,
+          name: nameField.value,
+          description: descriptionField.value,
+          };
 
-        this.setLocalStorageTask(updatedTask);
+          this.setLocalStorageTask(updatedTask);
+        }
       }
-      }
 
-      window.alert("A tarefa foi editada com sucesso!");
-
-      $updateForm.remove();
+      $modal?.remove();
     });
     const $cancelButton = document.querySelector('#cancel-button')
     $cancelButton?.addEventListener("click", (event) => {

@@ -94,7 +94,7 @@ export default class FormComponent {
 
       localStorage.setItem("arrayCards", JSON.stringify(arrayCards));
 
-      this.$kanbanForm.remove();
+      this.$kanbanFormContainer.remove();
     });
 
     const $cancelButton = document.querySelector('#cancel-button')
