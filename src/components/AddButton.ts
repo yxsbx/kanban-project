@@ -17,6 +17,10 @@ export class AddButton {
   addEventListener() {
     const $addButton = document.querySelector("#add-button");
     $addButton?.addEventListener("click", () => {
+      const existingForm = document.querySelector("#form-card-container");
+      if (existingForm) {
+        existingForm.remove();
+      }
       new FormComponent();
     });
   }

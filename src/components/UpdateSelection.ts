@@ -29,7 +29,12 @@ export default class UpdateSelection {
   addEventListener() {
     const $idSelection = document.querySelector("#id-selection");
     $idSelection?.addEventListener("change", () => {
-      new FormComponent();
+      const selectedId = +($idSelection as HTMLSelectElement).value;
+      const $updateFormCard = document.querySelector("#formCard");
+      if ($updateFormCard) {
+        $updateFormCard.remove();
+      }
+      new UpdateForm(selectedId);
     });
   }
 }
