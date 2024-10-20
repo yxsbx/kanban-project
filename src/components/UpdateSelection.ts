@@ -5,6 +5,16 @@ export default class UpdateSelection {
   constructor() {
     loadComponent(this.render());
     this.addEventListener();
+    this.updateWhenAddTask();
+  }
+  updateWhenAddTask() {
+    const addButton = document.querySelector("#add-button");
+    addButton?.addEventListener("click", () => {
+      document.querySelector("#formCard")?.addEventListener("submit", () => {
+        document.querySelector("#id-selection")?.remove();
+        new UpdateSelection();
+      });
+    });
   }
 
   render(): string {

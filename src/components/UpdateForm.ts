@@ -1,6 +1,7 @@
 import CardEntity from "../models/cardEntity";
 import { Tag } from "../utils/filterTasts";
 import loadComponent from "../utils/loadComponent";
+import UpdateSelection from "./UpdateSelection";
 
 export default class UpdateForm {
   private taskId: number;
@@ -62,7 +63,9 @@ export default class UpdateForm {
   }
 
   setLocalStorageTask(updatedTask: CardEntity) {
-    const tasks: CardEntity[] = JSON.parse(localStorage.getItem("arrayCards") ?? "[]");
+    const tasks: CardEntity[] = JSON.parse(
+      localStorage.getItem("arrayCards") ?? "[]"
+    );
     const taskIndex = tasks.findIndex((task) => +task.id === +updatedTask.id);
 
     if (taskIndex !== -1) {
@@ -79,31 +82,39 @@ export default class UpdateForm {
       const $modal = document.querySelector("#modal");
       const tagField = document.querySelector("#tag") as HTMLSelectElement;
       const nameField = document.querySelector("#name") as HTMLInputElement;
-      const descriptionField = document.querySelector("#description") as HTMLInputElement;
+      const descriptionField = document.querySelector(
+        "#description"
+      ) as HTMLInputElement;
 
       if (tagField && nameField && descriptionField) {
-      const tasks: CardEntity[] = JSON.parse(localStorage.getItem("arrayCards") ?? "[]");
-      const existingTask = tasks.find(task => +task.id === this.taskId);
+        const tasks: CardEntity[] = JSON.parse(
+          localStorage.getItem("arrayCards") ?? "[]"
+        );
+        const existingTask = tasks.find((task) => +task.id === this.taskId);
 
         if (existingTask) {
           const updatedTask: CardEntity = {
-          ...existingTask,
-          tag: tagField.value as Tag,
-          name: nameField.value,
-          description: descriptionField.value,
+            ...existingTask,
+            tag: tagField.value as Tag,
+            name: nameField.value,
+            description: descriptionField.value,
           };
 
           this.setLocalStorageTask(updatedTask);
+          document.querySelector("#id-selection")?.remove();
+          new UpdateSelection();
         }
       }
 
       $modal?.remove();
     });
-    const $cancelButton = document.querySelector('#cancel-button')
+    const $cancelButton = document.querySelector("#cancel-button");
     $cancelButton?.addEventListener("click", (event) => {
-      const $modal = document.querySelector("#modal")
+      const $modal = document.querySelector("#modal");
       event.preventDefault();
       $modal?.remove();
+      document.querySelector("#id-selection")?.remove();
+      new UpdateSelection();
     });
   }
 }
