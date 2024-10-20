@@ -1,8 +1,8 @@
 import { TagManager, FilterTaskUserManager } from "./tagsAndUsers";
 type Status = "Para Fazer" | "Em Andamento" | "Concluido";
-type Tag = "Front-End" | "Back-End" | "UX / UI" | "Data";
+export type Tag = "Front-End" | "Back-End" | "UX / UI" | "Data";
 
-interface CardEntity {
+export interface CardEntity {
   id: number;
   status: Status;
   tag: Tag;
