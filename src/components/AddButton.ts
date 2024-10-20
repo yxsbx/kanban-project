@@ -1,12 +1,6 @@
+import loadComponent from "../utils/loadComponent";
 import FormComponent from "./Form";
 
-function loadComponent(component: string, id?: string) {
-  const wrapper = document.querySelector<HTMLDivElement>(id ? id : "#app");
-
-  if (wrapper) {
-    wrapper.insertAdjacentHTML("beforeend", component);
-  }
-}
 
 export class AddButton {
   constructor() {
