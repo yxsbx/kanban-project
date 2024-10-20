@@ -1,7 +1,6 @@
 import loadComponent from "../utils/loadComponent";
 import FormComponent from "./Form";
 
-
 export class AddButton {
   constructor() {
     loadComponent(this.render());
@@ -10,7 +9,7 @@ export class AddButton {
 
   render() {
     return /*HTML*/ `
-    <button id="add-button" class="w-fit p-2.5 rounded-xl " style="background-color: #4f5966; color: white">Adicionar</button>
+    <button id="add-button" class="w-fit p-2.5 rounded-xl bg-slate-600 text-white">Adicionar</button>
     `;
   }
 
