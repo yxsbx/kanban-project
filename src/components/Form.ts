@@ -97,7 +97,7 @@ export default class FormComponent {
       this.$kanbanFormContainer.remove();
     });
 
-    const $cancelButton = document.querySelector("#cancel-button");
+    const $cancelButton = document.querySelector('#cancel-button')
     $cancelButton?.addEventListener("click", (event) => {
       event.preventDefault();
       this.$kanbanFormContainer.remove();
