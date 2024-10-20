@@ -1,5 +1,5 @@
 import loadComponent from "../utils/loadComponent";
-import FormComponent from "./Form";
+import UpdateForm from "./UpdateForm";
 
 export default class UpdateSelection {
   constructor() {
