@@ -34,7 +34,7 @@
 
     .project-avatar {
       @apply w-8 h-8 rounded-sm bg-transparent bg-center bg-no-repeat bg-cover;
-      background-image: url(./src/assets/projectavatar.svg);
+      background-image: url(./src/app/projectavatar.svg);
     }
 
     .sidebar-nav {
