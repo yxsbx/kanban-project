@@ -23,7 +23,6 @@ export class ContainerFilterControl {
   ];
   private onChanged: Function;
 
-  // Alterei contextMenuVisible para ser um objeto que controla os menus de label e type
   private contextMenuVisible = {
     label: false,
     type: false,
@@ -177,7 +176,7 @@ export class ContainerFilterControl {
       const avatarElement = document.getElementById(`avatar-${user.id}`);
       if (avatarElement) {
         avatarElement.addEventListener("click", (event) => {
-          event.preventDefault(); // Prevenir o comportamento padrão (F5)
+          event.preventDefault();
           this.toggleAssignee(user.id);
         });
       }
@@ -205,7 +204,6 @@ export class ContainerFilterControl {
     if (button) {
       button.addEventListener("click", (event) => {
         event.preventDefault();
-        // Alterar o estado apenas do menu de label
         this.contextMenuVisible.label = !this.contextMenuVisible.label;
 
         if (menu) {
@@ -241,10 +239,8 @@ export class ContainerFilterControl {
     if (button) {
       button.addEventListener("click", (event) => {
         event.preventDefault();
-        // Alterar o estado apenas do menu de type
         this.contextMenuVisible.type = !this.contextMenuVisible.type;
 
-        // Alterna a visibilidade do menu de filtro
         if (menu) {
           menu.classList.toggle("active", this.contextMenuVisible.type);
         }
