@@ -1,0 +1,44 @@
+.board {
+  @apply flex flex-row gap-4 px-10 w-full h-full overflow-auto;
+  scrollbar-width: none;
+
+  .board-column {
+    @apply rounded bg-backgroundLightest flex flex-col w-[290px] h-full;
+
+    .board-column-header {
+      @apply w-full h-12 p-4 flex flex-row justify-between items-center uppercase;
+
+      .square-button {
+        @apply invisible;
+
+        &.focused {
+          @apply bg-backgroundBlack visible;
+
+          app-svg-icon {
+            @apply text-white;
+          }
+        }
+      }
+
+      &:hover .square-button {
+        @apply visible;
+      }
+
+      .board-column-header-name {
+        @apply text-xs font-medium text-textDark;
+      }
+    }
+
+    .board-column-content {
+      @apply mx-1.5 flex flex-col gap-1 overflow-y-auto pb-1.5;
+    }
+
+    .board-column-footer {
+      @apply flex-shrink-0 p-1.5;
+    }
+
+    .btn-create-issue {
+      @apply block rounded flex flex-row flex-shrink-0 items-center gap-1 px-4 py-1 w-full text-textDark font-medium hover:bg-backgroundDark;
+    }
+  }
+}

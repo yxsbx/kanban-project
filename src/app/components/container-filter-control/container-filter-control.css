@@ -1,0 +1,100 @@
+.action-container {
+  @apply px-10 my-5 w-full gap-4 h-10 flex flex-row items-center;
+
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-input {
+    padding-left: 40px;
+    height: 32px;
+    width: 100%;
+    @apply focus:border-blue-550 focus:outline-none border-gray-300 border rounded py-2 bg-gray-50 sm:text-sm;
+  }
+
+  #search-icon-action {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+}
+
+.trigger-button,
+.clear-filters {
+  @apply flex items-center mx-2 px-2 z-10 py-1.5 rounded text-textDark font-medium hover:bg-gray-100 gap-2;
+  position: relative;
+}
+
+.trigger-button.active {
+  @apply text-white bg-blue-900;
+}
+
+.dropdown-menu {
+  @apply absolute bg-white shadow-lg rounded-sm py-[2px] z-10 mt-1 w-32 hidden;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+}
+
+.dropdown-menu.active {
+  @apply block;
+}
+
+.filter-options {
+  @apply flex my-1 flex-col gap-2;
+}
+
+.filter-option {
+  @apply flex px-3 py-1 items-center cursor-pointer bg-white text-textDark text-sm line-clamp-none hover:bg-gray-100 border-l-[2px] border-transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.filter-option:hover {
+  @apply border-primary hover:bg-gray-100;
+  background-color: #f0f0f0;
+}
+
+input[type='checkbox'] {
+  @apply mr-2;
+}
+
+.contributors {
+  @apply flex flex-row gap-2;
+}
+
+.contributors .app-avatar:not(:first-child) {
+  margin-left: -1rem;
+}
+
+.app-avatar {
+  @apply w-11 h-11 rounded-full bg-gray-300 bg-center bg-no-repeat bg-cover;
+  position: relative;
+}
+
+.tooltip {
+  @apply absolute text-xs text-white bg-gray-800 px-2 py-1 rounded-lg hidden;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgb(45 55 72 / 1) transparent transparent transparent;
+}
+
+.app-avatar:hover .tooltip {
+  @apply block;
+}

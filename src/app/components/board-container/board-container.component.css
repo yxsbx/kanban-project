@@ -1,0 +1,20 @@
+.app-board {
+  height: calc(100vh - 228px);
+}
+
+.board-heading {
+  @apply px-10 mt-2;
+
+  .board-title {
+    @apply flex flex-row justify-between items-center;
+  }
+
+  .textarea-inline {
+    @apply border-2 border-transparent text-textDark text-2xl outline-none shadow-none ring-0 font-medium w-full rounded px-0.5 py-1 focus:border-borderInputFocus;
+    resize: none;
+
+    &:hover:not(:focus) {
+      @apply bg-backgroundDark;
+    }
+  }
+}

@@ -1,0 +1,54 @@
+.modal {
+  @apply fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-xl p-6 max-w-lg w-full relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.close {
+  @apply absolute top-4 right-4 text-gray-600 cursor-pointer hover:text-gray-900;
+}
+
+h2 {
+  @apply text-xl font-bold mb-4 text-gray-800;
+}
+
+.form-group {
+  @apply mb-4;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  @apply block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-300;
+}
+
+.form-group textarea {
+  @apply resize-none;
+}
+
+.btn-save-issue {
+  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200;
+}
+
+.label-checkbox-group-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.label-item-labels {
+  display: flex;
+  align-items: center;
+}
+
+.label-item-labels input[type="checkbox"] {
+  margin-right: 5px;
+}

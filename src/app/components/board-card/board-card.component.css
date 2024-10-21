@@ -1,0 +1,54 @@
+.board-card {
+  @apply rounded w-[283px] block transition-colors m-1 bg-white p-3 shadow hover:bg-backgroundLightest cursor-pointer outline-none;
+
+  .square-button {
+    @apply invisible;
+
+    &.focused {
+      @apply bg-backgroundBlack visible;
+
+      app-svg-icon {
+        @apply text-white;
+      }
+    }
+  }
+
+  &:hover {
+    .square-button {
+      @apply visible;
+    }
+  }
+
+  .board-card-name {
+    @apply text-left;
+  }
+
+  .label {
+    @apply bg-backgroundGray text-textDark text-xs border-none px-1 py-0.5 rounded;
+  }
+
+  .context-button {
+    @apply px-2 py-1 hover:bg-backgroundDark;
+  }
+
+  .user-avatar {
+    @apply w-6 h-6 rounded-full bg-gray-300 bg-center bg-no-repeat bg-cover;
+  }
+}
+
+.context-menu {
+  @apply absolute bg-white hover:bg-gray-100 text-red-600 shadow-lg rounded-sm py-[2px] z-10 mt-1 w-20;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.context-menu-item {
+  @apply px-4 py-2 w-full text-left hover:bg-gray-100;
+  transition: background-color 0.2s ease;
+}
+
+.context-menu-item.delete-task:hover {
+  @apply bg-red-100;
+}

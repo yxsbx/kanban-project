@@ -1,0 +1,56 @@
+.app-sidebar-container {
+  .resizer {
+    @apply rotate-180 absolute top-[30px] right-[-11px] w-6 h-6 rounded-full bg-blue-500 text-white cursor-pointer z-10 transition-all duration-300 ease-in-out;
+
+    .resizer-icon {
+      @apply w-10 h-10;
+    }
+
+    &.revert {
+      @apply transform rotate-0;
+    }
+
+    &:hover {
+      @apply bg-blue-700;
+    }
+  }
+
+  .divider {
+    @apply top-0 bottom-0 right-0 absolute w-1 cursor-ew-resize;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.2) 0px, rgba(0, 0, 0, 0.2) 1px, rgba(0, 0, 0, 0.1) 1px, rgba(0, 0, 0, 0) 100%);
+    @apply transition-all duration-300 ease-in-out;
+
+    &:hover {
+      @apply bg-blue-550;
+    }
+  }
+
+  .sidebar-content {
+    @apply flex flex-col h-full;
+
+    .sidebar-header {
+      @apply flex flex-row flex-shrink-0 justify-start items-center gap-4 pt-2 pb-2 px-4 h-[82px];
+    }
+
+    .project-avatar {
+      @apply w-8 h-8 rounded-sm bg-transparent bg-center bg-no-repeat bg-cover;
+      background-image: url(./src/assets/projectavatar.svg);
+    }
+
+    .sidebar-nav {
+      @apply mx-2 overflow-y-auto flex-shrink;
+
+      .nav-item {
+        @apply flex flex-row px-2.5 py-2 items-center gap-4 rounded text-textDark transition-colors;
+
+        &:hover {
+          @apply bg-gray-200 text-textDark;
+        }
+
+        &.active {
+          @apply bg-gray-200 text-primary;
+        }
+      }
+    }
+  }
+}
