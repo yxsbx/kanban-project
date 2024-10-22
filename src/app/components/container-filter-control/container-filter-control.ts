@@ -87,7 +87,7 @@ export class ContainerFilterControl {
             Label
             <div id="label-arrow-icon" class="icon"></div>
           </button>
-          <div class="hidden dropdown-menu" id="label-menu">
+          <div class="dropdown-menu" id="label-menu">
             <div class="filter-options">
               ${this.labels.map((label) => this.renderLabelOption(label)).join("")}
             </div>
@@ -98,7 +98,7 @@ export class ContainerFilterControl {
             Type
             <div id="type-arrow-icon" class="icon"></div>
           </button>
-          <div class="hidden dropdown-menu" id="type-menu">
+          <div class="dropdown-menu" id="type-menu">
             <div class="filter-options">
               ${this.cardTypes.map((type) => this.renderTypeOption(type)).join("")}
             </div>
